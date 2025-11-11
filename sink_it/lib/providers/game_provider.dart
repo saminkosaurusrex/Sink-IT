@@ -1,6 +1,6 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sink_it/models/game.dart';
-import 'package:sink_it/models/ship.dart';
+import 'package:sink_it/models/ship/ship.dart';
 
 part 'game_provider.g.dart';
 

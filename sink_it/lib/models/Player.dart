@@ -1,4 +1,4 @@
-import 'package:sink_it/models/ship.dart';
+import 'package:sink_it/models/ship/ship.dart';
 
 class Player {
   final String id;
