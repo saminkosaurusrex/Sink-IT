@@ -12,34 +12,37 @@ class ShipBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: AppTheme.lightGray,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.directions_boat, color: AppTheme.textPrimary, size: 24),
-          const SizedBox(width: 12),
-          Expanded(child: StyledTitle(ship.name)),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-            decoration: BoxDecoration(
-              color: AppTheme.darkBackground,
-              borderRadius: BorderRadius.circular(12),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: AppTheme.lightGray,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.directions_boat, color: AppTheme.textPrimary, size: 24),
+            const SizedBox(width: 12),
+            Expanded(child: StyledTitle(ship.name)),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              decoration: BoxDecoration(
+                color: AppTheme.darkBackground,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: StyledText('${ship.size} tiles'),
             ),
-            child: StyledText('${ship.size} tiles'),
-          ),
-          if (onDelete != null) ...[
-            const SizedBox(width: 8),
-            IconButton(
-              onPressed: onDelete,
-              icon: Icon(Icons.delete, color: AppTheme.primaryRed),
-              iconSize: 20,
-            ),
+            if (onDelete != null) ...[
+              const SizedBox(width: 8),
+              IconButton(
+                onPressed: onDelete,
+                icon: Icon(Icons.delete, color: AppTheme.primaryRed),
+                iconSize: 20,
+              ),
+            ],
           ],
-        ],
+        ),
       ),
     );
   }

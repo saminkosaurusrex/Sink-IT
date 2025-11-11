@@ -12,7 +12,7 @@ class AppTheme {
   static const Color gridLineColor = Color(0xFF404040);
 
   // Herné farby
-  static const Color waterBlue = Color(0xFF4DD0E1);
+  static const Color waterBlue = Color.fromARGB(255, 19, 141, 157);
   static const Color shipGray = Color(0xFF757575);
   static const Color hitRed = Color(0xFFE53935);
   static const Color missWhite = Color(0xFFEEEEEE);

@@ -4,7 +4,7 @@ import 'package:sink_it/screens/player_setup_screen.dart';
 import 'package:sink_it/screens/setup/setting_row.dart';
 import 'package:sink_it/screens/setup/ship_box.dart';
 import 'package:sink_it/shared/board_size_button.dart';
-import 'package:sink_it/shared/create_boat_button.dart';
+//import 'package:sink_it/shared/create_boat_button.dart';
 import 'package:sink_it/shared/styled_box.dart';
 import 'package:sink_it/shared/styled_button.dart';
 import 'package:sink_it/shared/styled_text.dart';

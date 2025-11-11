@@ -4,7 +4,9 @@ import 'package:sink_it/models/ship/shape_cell.dart';
 class Ship {
   final String id;
   final String name;
+  // relative positions in ship creation grid
   final List<ShapeCell> shape;
+  // absolute position in main game grid
   final List<Position> placedPositions;
 
   Ship({

@@ -9,6 +9,47 @@ part of 'game_provider.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
+@ProviderFor(apiService)
+const apiServiceProvider = ApiServiceProvider._();
+
+final class ApiServiceProvider
+    extends $FunctionalProvider<ApiService, ApiService, ApiService>
+    with $Provider<ApiService> {
+  const ApiServiceProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'apiServiceProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$apiServiceHash();
+
+  @$internal
+  @override
+  $ProviderElement<ApiService> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  ApiService create(Ref ref) {
+    return apiService(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(ApiService value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<ApiService>(value),
+    );
+  }
+}
+
+String _$apiServiceHash() => r'7e41e80051c494cfc3b088e5d5e2997b3312eedb';
+
 @ProviderFor(BoardSize)
 const boardSizeProvider = BoardSizeProvider._();
 
@@ -113,6 +154,59 @@ abstract class _$CurrentGame extends $Notifier<Game?> {
   }
 }
 
+@ProviderFor(CurrentPlayer)
+const currentPlayerProvider = CurrentPlayerProvider._();
+
+final class CurrentPlayerProvider
+    extends $NotifierProvider<CurrentPlayer, Player?> {
+  const CurrentPlayerProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'currentPlayerProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$currentPlayerHash();
+
+  @$internal
+  @override
+  CurrentPlayer create() => CurrentPlayer();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(Player? value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<Player?>(value),
+    );
+  }
+}
+
+String _$currentPlayerHash() => r'a4d5480d3eed031c66aa69d1df28d1d8f901c1d3';
+
+abstract class _$CurrentPlayer extends $Notifier<Player?> {
+  Player? build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<Player?, Player?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<Player?, Player?>,
+              Player?,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
+
 @ProviderFor(Player1Ships)
 const player1ShipsProvider = Player1ShipsProvider._();
 
@@ -145,7 +239,7 @@ final class Player1ShipsProvider
   }
 }
 
-String _$player1ShipsHash() => r'8d5cc0b9778f13f69761869c04f5850bf14221fa';
+String _$player1ShipsHash() => r'80b477f29eec5b449356926edb3e1827a2b0ade1';
 
 abstract class _$Player1Ships extends $Notifier<List<Ship>> {
   List<Ship> build();
@@ -198,7 +292,7 @@ final class Player2ShipsProvider
   }
 }
 
-String _$player2ShipsHash() => r'f9904a2deb8b4368bf19a7f96b0b0cc539482dbb';
+String _$player2ShipsHash() => r'faa42c9342732dbbd791cb7b7bddb89bacab42b6';
 
 abstract class _$Player2Ships extends $Notifier<List<Ship>> {
   List<Ship> build();
@@ -217,4 +311,357 @@ abstract class _$Player2Ships extends $Notifier<List<Ship>> {
             >;
     element.handleValue(ref, created);
   }
+}
+
+/// Create a new game
+
+@ProviderFor(createGame)
+const createGameProvider = CreateGameFamily._();
+
+/// Create a new game
+
+final class CreateGameProvider
+    extends $FunctionalProvider<AsyncValue<Game>, Game, FutureOr<Game>>
+    with $FutureModifier<Game>, $FutureProvider<Game> {
+  /// Create a new game
+  const CreateGameProvider._({
+    required CreateGameFamily super.from,
+    required GameConfig super.argument,
+  }) : super(
+         retry: null,
+         name: r'createGameProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$createGameHash();
+
+  @override
+  String toString() {
+    return r'createGameProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $FutureProviderElement<Game> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<Game> create(Ref ref) {
+    final argument = this.argument as GameConfig;
+    return createGame(ref, config: argument);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is CreateGameProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$createGameHash() => r'c26c647d396707042eaf4963463ecf02136f945e';
+
+/// Create a new game
+
+final class CreateGameFamily extends $Family
+    with $FunctionalFamilyOverride<FutureOr<Game>, GameConfig> {
+  const CreateGameFamily._()
+    : super(
+        retry: null,
+        name: r'createGameProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  /// Create a new game
+
+  CreateGameProvider call({required GameConfig config}) =>
+      CreateGameProvider._(argument: config, from: this);
+
+  @override
+  String toString() => r'createGameProvider';
+}
+
+/// Join an existing game
+
+@ProviderFor(joinGame)
+const joinGameProvider = JoinGameFamily._();
+
+/// Join an existing game
+
+final class JoinGameProvider
+    extends $FunctionalProvider<AsyncValue<Player>, Player, FutureOr<Player>>
+    with $FutureModifier<Player>, $FutureProvider<Player> {
+  /// Join an existing game
+  const JoinGameProvider._({
+    required JoinGameFamily super.from,
+    required ({String gameId, String playerName}) super.argument,
+  }) : super(
+         retry: null,
+         name: r'joinGameProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$joinGameHash();
+
+  @override
+  String toString() {
+    return r'joinGameProvider'
+        ''
+        '$argument';
+  }
+
+  @$internal
+  @override
+  $FutureProviderElement<Player> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<Player> create(Ref ref) {
+    final argument = this.argument as ({String gameId, String playerName});
+    return joinGame(
+      ref,
+      gameId: argument.gameId,
+      playerName: argument.playerName,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is JoinGameProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$joinGameHash() => r'45969e8288a7b759d7e7092d91bdb31322fa5e61';
+
+/// Join an existing game
+
+final class JoinGameFamily extends $Family
+    with
+        $FunctionalFamilyOverride<
+          FutureOr<Player>,
+          ({String gameId, String playerName})
+        > {
+  const JoinGameFamily._()
+    : super(
+        retry: null,
+        name: r'joinGameProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  /// Join an existing game
+
+  JoinGameProvider call({required String gameId, required String playerName}) =>
+      JoinGameProvider._(
+        argument: (gameId: gameId, playerName: playerName),
+        from: this,
+      );
+
+  @override
+  String toString() => r'joinGameProvider';
+}
+
+/// Place ships for a player
+
+@ProviderFor(placeShips)
+const placeShipsProvider = PlaceShipsFamily._();
+
+/// Place ships for a player
+
+final class PlaceShipsProvider
+    extends $FunctionalProvider<AsyncValue<void>, void, FutureOr<void>>
+    with $FutureModifier<void>, $FutureProvider<void> {
+  /// Place ships for a player
+  const PlaceShipsProvider._({
+    required PlaceShipsFamily super.from,
+    required ({String gameId, String playerId, List<Ship> ships})
+    super.argument,
+  }) : super(
+         retry: null,
+         name: r'placeShipsProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$placeShipsHash();
+
+  @override
+  String toString() {
+    return r'placeShipsProvider'
+        ''
+        '$argument';
+  }
+
+  @$internal
+  @override
+  $FutureProviderElement<void> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<void> create(Ref ref) {
+    final argument =
+        this.argument as ({String gameId, String playerId, List<Ship> ships});
+    return placeShips(
+      ref,
+      gameId: argument.gameId,
+      playerId: argument.playerId,
+      ships: argument.ships,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is PlaceShipsProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$placeShipsHash() => r'e7f90ebd4e0bec0c293ea181fa32ff950c28a14c';
+
+/// Place ships for a player
+
+final class PlaceShipsFamily extends $Family
+    with
+        $FunctionalFamilyOverride<
+          FutureOr<void>,
+          ({String gameId, String playerId, List<Ship> ships})
+        > {
+  const PlaceShipsFamily._()
+    : super(
+        retry: null,
+        name: r'placeShipsProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  /// Place ships for a player
+
+  PlaceShipsProvider call({
+    required String gameId,
+    required String playerId,
+    required List<Ship> ships,
+  }) => PlaceShipsProvider._(
+    argument: (gameId: gameId, playerId: playerId, ships: ships),
+    from: this,
+  );
+
+  @override
+  String toString() => r'placeShipsProvider';
+}
+
+/// Set player as ready
+
+@ProviderFor(setPlayerReady)
+const setPlayerReadyProvider = SetPlayerReadyFamily._();
+
+/// Set player as ready
+
+final class SetPlayerReadyProvider
+    extends $FunctionalProvider<AsyncValue<void>, void, FutureOr<void>>
+    with $FutureModifier<void>, $FutureProvider<void> {
+  /// Set player as ready
+  const SetPlayerReadyProvider._({
+    required SetPlayerReadyFamily super.from,
+    required ({String gameId, String playerId}) super.argument,
+  }) : super(
+         retry: null,
+         name: r'setPlayerReadyProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$setPlayerReadyHash();
+
+  @override
+  String toString() {
+    return r'setPlayerReadyProvider'
+        ''
+        '$argument';
+  }
+
+  @$internal
+  @override
+  $FutureProviderElement<void> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<void> create(Ref ref) {
+    final argument = this.argument as ({String gameId, String playerId});
+    return setPlayerReady(
+      ref,
+      gameId: argument.gameId,
+      playerId: argument.playerId,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is SetPlayerReadyProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$setPlayerReadyHash() => r'4cdf199d183488fa3681b18f3f911af847ecbe31';
+
+/// Set player as ready
+
+final class SetPlayerReadyFamily extends $Family
+    with
+        $FunctionalFamilyOverride<
+          FutureOr<void>,
+          ({String gameId, String playerId})
+        > {
+  const SetPlayerReadyFamily._()
+    : super(
+        retry: null,
+        name: r'setPlayerReadyProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  /// Set player as ready
+
+  SetPlayerReadyProvider call({
+    required String gameId,
+    required String playerId,
+  }) => SetPlayerReadyProvider._(
+    argument: (gameId: gameId, playerId: playerId),
+    from: this,
+  );
+
+  @override
+  String toString() => r'setPlayerReadyProvider';
 }
