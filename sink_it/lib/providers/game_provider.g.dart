@@ -48,7 +48,7 @@ final class ApiServiceProvider
   }
 }
 
-String _$apiServiceHash() => r'7e41e80051c494cfc3b088e5d5e2997b3312eedb';
+String _$apiServiceHash() => r'5c6ea4385db7b77b113c9dc74cddddf572c0018e';
 
 @ProviderFor(BoardSize)
 const boardSizeProvider = BoardSizeProvider._();
@@ -367,7 +367,7 @@ final class CreateGameProvider
   }
 }
 
-String _$createGameHash() => r'c26c647d396707042eaf4963463ecf02136f945e';
+String _$createGameHash() => r'647ed528fe21ef7766331bf694b8313e8ca4ae62';
 
 /// Create a new game
 
@@ -449,7 +449,7 @@ final class JoinGameProvider
   }
 }
 
-String _$joinGameHash() => r'45969e8288a7b759d7e7092d91bdb31322fa5e61';
+String _$joinGameHash() => r'854aae10ab7367f3130402b3860ea6a840ac2702';
 
 /// Join an existing game
 
@@ -541,7 +541,7 @@ final class PlaceShipsProvider
   }
 }
 
-String _$placeShipsHash() => r'e7f90ebd4e0bec0c293ea181fa32ff950c28a14c';
+String _$placeShipsHash() => r'3b8a641e14e1247e1f91376be56c56b8d74fe2df';
 
 /// Place ships for a player
 
@@ -633,7 +633,7 @@ final class SetPlayerReadyProvider
   }
 }
 
-String _$setPlayerReadyHash() => r'4cdf199d183488fa3681b18f3f911af847ecbe31';
+String _$setPlayerReadyHash() => r'74af6de446d8c2cf029af1665de0f1af490ea34d';
 
 /// Set player as ready
 

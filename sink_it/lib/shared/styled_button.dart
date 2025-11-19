@@ -8,7 +8,7 @@ class PrimaryButton extends StatelessWidget {
     required this.child,
   });
 
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final Widget child;
 
   @override

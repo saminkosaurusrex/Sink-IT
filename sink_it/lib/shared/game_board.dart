@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:sink_it/enums/cell_state.dart';
 import 'package:sink_it/models/position.dart';
 import 'package:sink_it/theme.dart';
-
-// enum for cell type of the board
-enum CellState { empty, ship, hit, miss }
 
 class GameBoard extends StatelessWidget {
   const GameBoard({
@@ -28,11 +26,13 @@ class GameBoard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: AppTheme.missWhite,
+          color: AppTheme.cardBackground,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppTheme.lightGray),
+          border: Border.all(color: AppTheme.lightGray, width: 2),
+          boxShadow: AppTheme.cardShadow,
         ),
         child: GridView.builder(
+          physics: NeverScrollableScrollPhysics(),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: boardSize,
             crossAxisSpacing: 2,
@@ -49,10 +49,12 @@ class GameBoard extends StatelessWidget {
               onTap: interactive && onCellTap != null
                   ? () => onCellTap!(position)
                   : null,
-              child: Container(
+              child: AnimatedContainer(
+                duration: AppTheme.shortAnimation,
                 decoration: BoxDecoration(
                   color: _getCellColor(cellState),
                   border: Border.all(color: AppTheme.gridLineColor, width: 0.5),
+                  borderRadius: BorderRadius.circular(2),
                 ),
                 child: _getCellContent(cellState),
               ),
@@ -66,7 +68,7 @@ class GameBoard extends StatelessWidget {
   Color _getCellColor(CellState cellState) {
     switch (cellState) {
       case CellState.empty:
-        return AppTheme.waterBlue;
+        return const Color.fromARGB(255, 54, 190, 208);
       case CellState.hit:
         return AppTheme.hitRed;
       case CellState.miss:

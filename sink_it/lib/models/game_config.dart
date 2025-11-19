@@ -7,12 +7,18 @@ class GameConfig {
   final bool animationsEnabled;
   final List<Ship> fleet;
 
+  int get maxFleetSize {
+    if (boardSize == 8) return 3;
+    if (boardSize == 10) return 5;
+    return 5;
+  }
+
   GameConfig({
     required this.boardSize,
     this.soundEnabled = true,
     this.animationsEnabled = true,
     List<Ship>? fleet,
-  }) : fleet = fleet ?? _getDefaultFleet(boardSize);
+  }) : fleet = fleet ?? [];
 
   static List<Ship> _getDefaultFleet(int boardSize) {
     if (boardSize == 8) {

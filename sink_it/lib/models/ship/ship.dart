@@ -29,11 +29,15 @@ class Ship {
     return shape.map((c) => c.y).reduce((a, b) => a > b ? a : b) + 1;
   }
 
-  Ship copyWith({List<Position>? placedPositions}) {
+  Ship copyWith({
+    List<ShapeCell>? shape,
+    List<Position>? placedPositions,
+    String? name,
+  }) {
     return Ship(
       id: id,
-      name: name,
-      shape: shape,
+      name: name ?? this.name,
+      shape: shape ?? this.shape,
       placedPositions: placedPositions ?? this.placedPositions,
     );
   }

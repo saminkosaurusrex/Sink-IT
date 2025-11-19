@@ -38,6 +38,7 @@ dependencies:
   riverpod: ^3.0.3
   riverpod_annotation: ^3.0.3
   http: ^1.6.0
+  flutter_riverpod: ^3.0.3
 
 dev_dependencies:
   flutter_test:
@@ -50,6 +51,10 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
   riverpod_generator: ^3.0.3
+  riverpod_lint: ^3.0.3
+  build_runner: ^2.10.4
+  #custom_lint: ^0.8.1
+  #riverpod_lint: ^3.0.3
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
