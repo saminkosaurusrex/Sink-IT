@@ -1,3 +1,4 @@
+import 'package:sink_it/enums/game_status.dart';
 import 'package:sink_it/models/Player.dart';
 import 'package:sink_it/models/game_config.dart';
 
@@ -6,7 +7,7 @@ class Game {
   final GameConfig config;
   final Player player1;
   final Player player2;
-  final String status;
+  final GameStatus status;
   final String? winnerId;
   final int currentPlayerIndex;
 

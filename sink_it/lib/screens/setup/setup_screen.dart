@@ -3,6 +3,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:sink_it/providers/game_config_provider.dart';
+import 'package:sink_it/providers/game_state_provider.dart';
 import 'package:sink_it/providers/ship_editor_provider.dart';
 import 'package:sink_it/screens/player_setup_screen.dart';
 import 'package:sink_it/screens/setup/setting_row.dart';
@@ -209,7 +210,10 @@ class SetupScreen extends ConsumerWidget {
                       );
                       return;
                     }
-
+                    final gameStateController = ref.read(
+                      gameStateProvider.notifier,
+                    );
+                    gameStateController.createGame(currentConfig);
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (ctx) => PlayerSetupScreen()),

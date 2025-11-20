@@ -3,10 +3,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sink_it/enums/game_status.dart';
 import 'package:sink_it/providers/game_config_provider.dart';
+import 'package:sink_it/providers/game_state_provider.dart';
 import 'package:sink_it/providers/ship_placement_provider.dart';
-import 'package:sink_it/models/position.dart';
-import 'package:sink_it/models/ship/ship.dart';
+import 'package:sink_it/screens/game_screen.dart';
 import 'package:sink_it/screens/setup/ship_box.dart';
 import 'package:sink_it/shared/game_board.dart';
 import 'package:sink_it/shared/styled_box.dart';
@@ -24,8 +25,16 @@ class PlayerSetupScreen extends ConsumerWidget {
     final placementState = ref.watch(shipPlacementProvider);
     final isSubmitting = ref.watch(isSubmittingProvider);
 
+    final currentPlayerName = ref.watch(currentPlayerNameProvider);
+
+    //final gameStateController = ref.read(gameStateProvider.notifier);
+    //final currentPlayerIndex = ref.watch(currentPlayerIndexProvider);
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Player Setup'), centerTitle: true),
+      appBar: AppBar(
+        title: Text('$currentPlayerName Setup'),
+        centerTitle: true,
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -39,7 +48,7 @@ class PlayerSetupScreen extends ConsumerWidget {
                     title: StyledTitle('Fleet Composition'),
                     child: Column(
                       children: gameConfig.fleet.asMap().entries.map((entry) {
-                        final index = entry.key;
+                        //final index = entry.key;
                         final ship = entry.value;
                         final isPlaced = placementController.isShipPlaced(
                           ship.id,
@@ -100,29 +109,28 @@ class PlayerSetupScreen extends ConsumerWidget {
                   // Submit Button
                   PrimaryButton(
                     onPressed: !isSubmitting && placementController.canSubmit()
-                        ? () {
-                            placementController
-                                .submitShips()
-                                .then((_) {
-                                  if (context.mounted) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text('Ships submitted!'),
-                                        backgroundColor: Colors.green,
-                                      ),
-                                    );
-                                  }
-                                })
-                                .catchError((e) {
-                                  if (context.mounted) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text('Error: $e'),
-                                        backgroundColor: AppTheme.hitRed,
-                                      ),
-                                    );
-                                  }
-                                });
+                        ? () async {
+                            // uloženie lodí do GameState
+                            await placementController.submitShips();
+                            final gameReady = ref.watch(
+                              allPLayersReadyProvider,
+                            );
+                            if (gameReady) {
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Both players are ready!'),
+                                    backgroundColor: Colors.green,
+                                  ),
+                                );
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (stx) => GameScreen(),
+                                  ),
+                                );
+                              }
+                            }
                           }
                         : null,
                     child: isSubmitting

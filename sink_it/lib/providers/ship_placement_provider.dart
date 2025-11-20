@@ -4,6 +4,7 @@ import 'package:sink_it/helpers/ship_placement_helper.dart';
 import 'package:sink_it/models/position.dart';
 import 'package:sink_it/models/ship/ship.dart';
 import 'package:sink_it/providers/game_config_provider.dart';
+import 'package:sink_it/providers/game_state_provider.dart';
 
 part 'ship_placement_provider.g.dart';
 
@@ -33,17 +34,24 @@ class ShipPlacementState {
       isSubmitting: isSubmitting ?? this.isSubmitting,
     );
   }
+
+  factory ShipPlacementState.initial(List<Ship> fleet) {
+    return ShipPlacementState(
+      placedShips: const [],
+      selectedShip: fleet.isNotEmpty ? fleet[0] : null,
+      selectedShipIndex: 0,
+      isSubmitting: false,
+    );
+  }
 }
 
 @riverpod
 class ShipPlacement extends _$ShipPlacement {
   @override
   ShipPlacementState build() {
-    final config = ref.watch(gameConfigControllerProvider);
+    final fleet = ref.watch(gameConfigControllerProvider).fleet;
 
-    return ShipPlacementState(
-      selectedShip: config.fleet.isNotEmpty ? config.fleet[0] : null,
-    );
+    return ShipPlacementState.initial(fleet);
   }
 
   int get _boardsize => ref.read(gameConfigControllerProvider).boardSize;
@@ -130,6 +138,12 @@ class ShipPlacement extends _$ShipPlacement {
 
     state = state.copyWith(isSubmitting: true);
 
+    final ships = state.placedShips;
+    final game = ref.read(gameStateProvider.notifier);
+
+    game.sumbitPlayerShips(ships);
+    state = ShipPlacementState.initial([]);
+
     try {
       // TODO: API call na server
       // final api = ref.read(apiServiceProvider);
@@ -147,8 +161,7 @@ class ShipPlacement extends _$ShipPlacement {
   }
 
   void reset() {
-    final firstShip = _fleet.isNotEmpty ? _fleet[0] : null;
-    state = ShipPlacementState(selectedShip: firstShip);
+    state = ShipPlacementState.initial(_fleet);
   }
 
   void removeShip(String shipId) {
