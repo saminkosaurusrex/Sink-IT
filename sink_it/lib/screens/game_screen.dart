@@ -7,6 +7,7 @@ import 'package:sink_it/enums/cell_state.dart';
 import 'package:sink_it/models/position.dart';
 import 'package:sink_it/providers/game_play_provider.dart';
 import 'package:sink_it/providers/game_state_provider.dart';
+import 'package:sink_it/screens/win_screen.dart';
 import 'package:sink_it/shared/game_board.dart';
 import 'package:sink_it/shared/styled_text.dart';
 import 'package:sink_it/theme.dart';
@@ -20,6 +21,19 @@ class GameScreen extends ConsumerWidget {
     final game = ref.watch(gameStateProvider);
     final gamePlayState = ref.watch(gamePlayProvider);
     final isAttacking = ref.watch(isAttackingProvider);
+
+    ref.listen(gameStateProvider, (previous, next) {
+      if (next != null && next.winnerId != null && context.mounted) {
+        final winner = next.winnerId == next.player1?.id
+            ? next.player1!
+            : next.player2!;
+
+        // Naviguj na winning screen
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => WinScreen(name: winner.name)),
+        );
+      }
+    });
 
     if (game == null || game.player1 == null || game.player2 == null) {
       return Scaffold(
@@ -45,14 +59,13 @@ class GameScreen extends ConsumerWidget {
       body: SafeArea(
         child: Column(
           children: [
-            // ===== PLAYER 1 BOARD (hore) =====
             Expanded(
               child: _buildPlayerSection(
                 context: context,
                 ref: ref,
-                player: game.player1!,
-                cellStates: gamePlayState.playerBoard, // ✅ P1 útočí na P2
-                isCurrentPlayer: game.currentPlayerIndex == 0,
+                player: game.player2!,
+                cellStates: gamePlayState.opponentBoard, // ✅ P2 útočí na P1
+                isCurrentPlayer: game.currentPlayerIndex == 1,
                 isAttacking: isAttacking,
                 rotated: true,
                 showShips: false, // ✅ Neukáž lode protivníka
@@ -62,18 +75,18 @@ class GameScreen extends ConsumerWidget {
             // ===== DIVIDER =====
             Container(
               height: 4,
-              color: AppTheme.primaryRed,
+              color: AppTheme.missWhite,
               margin: EdgeInsets.symmetric(vertical: 8),
             ),
 
-            // ===== PLAYER 2 BOARD (dole, otočený) =====
+            // ===== PLAYER 1 BOARD (hore) =====
             Expanded(
               child: _buildPlayerSection(
                 context: context,
                 ref: ref,
-                player: game.player2!,
-                cellStates: gamePlayState.opponentBoard, // ✅ P2 útočí na P1
-                isCurrentPlayer: game.currentPlayerIndex == 1,
+                player: game.player1!,
+                cellStates: gamePlayState.playerBoard, // ✅ P1 útočí na P2
+                isCurrentPlayer: game.currentPlayerIndex == 0,
                 isAttacking: isAttacking,
                 rotated: false,
                 showShips: false, // ✅ Neukáž lode protivníka

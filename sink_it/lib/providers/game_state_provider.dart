@@ -98,6 +98,19 @@ class GameState extends _$GameState {
     state = null;
   }
 
+  void setWinner(String winnerId) {
+    if (state == null) return;
+    state = Game(
+      id: state!.id,
+      config: state!.config,
+      player1: state!.player1,
+      player2: state!.player2,
+      status: GameStatus.end,
+      winnerId: winnerId,
+      currentPlayerIndex: state!.currentPlayerIndex,
+    );
+  }
+
   void startGame() {
     if (state == null) return;
     if (!state!.player1!.isReady || !state!.player2!.isReady) return;

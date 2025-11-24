@@ -12,6 +12,6 @@ ApiService apiService(Ref ref) {
   // Pro reálné zařízení: http://192.168.X.X:8000 (IP tvého počítače)
 
   return ApiService(
-    baseUrl: 'http://10.193.174.140:8000', // ← ZMĚŇ NA SVOU IP!
+    baseUrl: 'http://10.193.174.137:8000', // ← ZMĚŇ NA SVOU IP!
   );
 }
