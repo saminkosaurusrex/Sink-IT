@@ -1,159 +1,202 @@
+//Author: Smaule Kundrat
+// login xkundrs00
 import 'package:http/http.dart' as http;
+import 'package:sink_it/exceptions/api_exception.dart';
+import 'package:sink_it/models/Player.dart';
 import 'dart:convert';
 import 'package:sink_it/models/game.dart';
 import 'package:sink_it/models/game_config.dart';
-import 'package:sink_it/models/Player.dart';
+import 'package:sink_it/models/position.dart';
+import 'package:sink_it/models/ship/attack_response.dart';
 import 'package:sink_it/models/ship/ship.dart';
 
-// ============= EXCEPTIONS =============
-class ApiException implements Exception {
-  final String message;
-  final int? statusCode;
-
-  ApiException({required this.message, this.statusCode});
-
-  @override
-  String toString() =>
-      'ApiException: $message${statusCode != null ? ' (Status: $statusCode)' : ''}';
-}
-
-// ============= API SERVICE =============
 class ApiService {
   final String baseUrl;
-  late final http.Client _client;
+  final http.Client _client;
 
-  ApiService({this.baseUrl = 'http://localhost:8000'}) {
-    _client = http.Client();
-  }
+  ApiService({required this.baseUrl, http.Client? client})
+    : _client = client ?? http.Client();
 
-  /// Helper method for making HTTP requests
-  Future<dynamic> _request(
-    String method,
-    String endpoint, {
-    dynamic body,
-  }) async {
-    final url = Uri.parse('$baseUrl$endpoint');
-    final headers = {'Content-Type': 'application/json'};
+  Map<String, String> get _headers => {
+    'Content-Type': 'application/json',
+    'Accept': 'appplication/json',
+  };
 
+  // api call for game creation
+  Future<Game> createGame(GameConfig config) async {
     try {
-      late final http.Response response;
+      final response = await _client.post(
+        Uri.parse('$baseUrl/games'),
+        headers: _headers,
+        body: jsonEncode({'config': config.toJson()}),
+      );
 
-      switch (method) {
-        case 'GET':
-          response = await _client.get(url, headers: headers);
-          break;
-        case 'POST':
-          response = await _client.post(
-            url,
-            headers: headers,
-            body: body != null ? jsonEncode(body) : null,
-          );
-          break;
-        case 'DELETE':
-          response = await _client.delete(url, headers: headers);
-          break;
-        default:
-          throw ApiException(message: 'Unsupported method: $method');
-      }
-
-      if (response.statusCode >= 200 && response.statusCode < 300) {
-        if (response.body.isEmpty) return null;
-        return jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return Game.fromJson(data);
       } else {
-        try {
-          final error = jsonDecode(response.body);
-          throw ApiException(
-            message: error['detail'] ?? 'Unknown error',
-            statusCode: response.statusCode,
-          );
-        } catch (_) {
-          throw ApiException(
-            message: 'HTTP Error ${response.statusCode}',
-            statusCode: response.statusCode,
-          );
-        }
+        throw ApiException(
+          'Failed to create a game: ${response.body}',
+          response.body,
+        );
       }
     } catch (e) {
-      rethrow;
+      throw ApiException('Network error creating a game', e.toString());
     }
   }
 
-  // ============= GAME ENDPOINTS =============
-
-  /// Create a new game with custom configuration
-  Future<Game> createGame(GameConfig config) async {
-    final response = await _request(
-      'POST',
-      '/games',
-      body: {'config': config.toJson()},
-    );
-    return Game.fromJson(response);
+  //api call for get a game
+  Future<Game> getGame(String id) async {
+    try {
+      final response = await _client.get(
+        Uri.parse('$baseUrl/games/$id'),
+        headers: _headers,
+      );
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return Game.fromJson(data);
+      } else {
+        throw ApiException(
+          'Failed to get game: ${response.statusCode}',
+          response.body,
+        );
+      }
+    } catch (e) {
+      throw ApiException('Network error getting game', e.toString());
+    }
   }
 
-  /// List all active games
-  Future<List<Game>> listGames() async {
-    final response = await _request('GET', '/games');
-    return (response as List).map((g) => Game.fromJson(g)).toList();
+  //--- PLAYER ---
+
+  //joining
+  Future<Player> joinGame(String id, String name) async {
+    try {
+      final response = await _client.post(
+        Uri.parse('$baseUrl/games/$id/join'),
+        headers: _headers,
+        body: jsonEncode({'player_name': name}),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return Player.fromJson(data);
+      } else {
+        throw ApiException(
+          'Failed to join the game: ${response.statusCode}',
+          response.body,
+        );
+      }
+    } catch (e) {
+      throw ApiException('Network error joining game', e.toString());
+    }
   }
 
-  /// Get game details
-  Future<Game> getGame(String gameId) async {
-    final response = await _request('GET', '/games/$gameId');
-    return Game.fromJson(response);
-  }
-
-  /// Join an existing game
-  Future<Player> joinGame(String gameId, String playerName) async {
-    final response = await _request(
-      'POST',
-      '/games/$gameId/join',
-      body: {'player_name': playerName},
-    );
-    return Player.fromJson(response);
-  }
-
-  /// Delete a game
-  Future<void> deleteGame(String gameId) async {
-    await _request('DELETE', '/games/$gameId');
-  }
-
-  // ============= SHIP PLACEMENT ENDPOINTS =============
-
-  /// Place multiple ships on the board
-  Future<dynamic> placeShips(
-    String gameId,
+  //placing shiups
+  Future<void> placeShips(
+    String gameID,
     String playerId,
     List<Ship> ships,
   ) async {
-    final shipsJson = ships
-        .map(
-          (s) => {
-            'ship_name': s.name,
-            'positions': s.placedPositions.map((p) => p.toJson()).toList(),
-          },
-        )
-        .toList();
+    try {
+      final shipsJson = ships.map((ship) {
+        final json = ship.toJson();
+        print('🔍 Ship JSON: $json'); // ← DEBUG
+        return json;
+      }).toList();
 
-    final response = await _request(
-      'POST',
-      '/games/$gameId/players/$playerId/ships',
-      body: {'ships': shipsJson},
-    );
-    return response;
+      print('📦 All ships JSON: $shipsJson');
+      final response = await _client.post(
+        Uri.parse('$baseUrl/games/$gameID/players/$playerId/ships'),
+        headers: _headers,
+        body: jsonEncode({'ships': shipsJson}),
+      );
+      if (response.statusCode != 200) {
+        throw ApiException(
+          'Failed to place ships for player: $playerId, code: ${response.statusCode}',
+          response.body,
+        );
+      }
+    } catch (e) {
+      throw ApiException('Network error placing ships', e.toString());
+    }
   }
 
-  // ============= PLAYER ENDPOINTS =============
+  //setting player ready
+  Future<void> setPlayerReady(String gameID, String playerID) async {
+    try {
+      final response = await _client.post(
+        Uri.parse('$baseUrl/games/$gameID/players/$playerID/ready'),
+        headers: _headers,
+      );
 
-  /// Mark player as ready to start the game
-  Future<dynamic> setPlayerReady(String gameId, String playerId) async {
-    final response = await _request(
-      'POST',
-      '/games/$gameId/players/$playerId/ready',
-    );
-    return response;
+      if (response.statusCode != 200) {
+        throw ApiException(
+          'Failed to set Player: $playerID ready! code: ${response.statusCode}',
+          response.body,
+        );
+      }
+    } catch (e) {
+      throw ApiException(
+        'Network error setting player: $playerID ready',
+        e.toString(),
+      );
+    }
   }
 
-  /// Cleanup resources
+  // --- Game --
+  Future<AttackResponse> attack({
+    required String gameId,
+    required String attackerId,
+    required String target,
+    required Position pos,
+  }) async {
+    try {
+      final response = await _client.post(
+        Uri.parse('$baseUrl/gmaes/$gameId/attack'),
+        headers: _headers,
+        body: ({
+          'attacker_id': attackerId,
+          'target_id': target,
+          'position': pos.toJson(),
+        }),
+      );
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return AttackResponse.fromJson(data);
+      } else {
+        throw ApiException(
+          'Failed to attack Player: $target, code: ${response.statusCode}',
+          response.body,
+        );
+      }
+    } catch (e) {
+      throw ApiException('Network fail during attack', e.toString());
+    }
+  }
+
+  // delete game
+
+  Future<void> deleteGame(String gameId) async {
+    try {
+      final response = await _client.delete(
+        Uri.parse('$baseUrl/games/$gameId'),
+        headers: _headers,
+      );
+
+      if (response.statusCode != 200) {
+        throw ApiException(
+          'Failed to delete the game: $gameId, code:${response.statusCode}',
+          response.body,
+        );
+      }
+    } catch (e) {
+      throw ApiException(
+        'Network error during deletion of the game!',
+        e.toString(),
+      );
+    }
+  }
+
   void dispose() {
     _client.close();
   }

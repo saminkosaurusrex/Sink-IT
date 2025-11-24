@@ -3,7 +3,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sink_it/enums/game_status.dart';
 import 'package:sink_it/providers/game_config_provider.dart';
 import 'package:sink_it/providers/game_state_provider.dart';
 import 'package:sink_it/providers/ship_placement_provider.dart';
@@ -26,9 +25,6 @@ class PlayerSetupScreen extends ConsumerWidget {
     final isSubmitting = ref.watch(isSubmittingProvider);
 
     final currentPlayerName = ref.watch(currentPlayerNameProvider);
-
-    //final gameStateController = ref.read(gameStateProvider.notifier);
-    //final currentPlayerIndex = ref.watch(currentPlayerIndexProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -116,6 +112,11 @@ class PlayerSetupScreen extends ConsumerWidget {
                               allPLayersReadyProvider,
                             );
                             if (gameReady) {
+                              final gameStateController = ref.read(
+                                gameStateProvider.notifier,
+                              );
+                              gameStateController.startGame();
+
                               if (context.mounted) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(

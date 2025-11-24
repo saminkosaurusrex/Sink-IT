@@ -7,6 +7,7 @@ import 'package:sink_it/models/Player.dart';
 import 'package:sink_it/models/game.dart';
 import 'package:sink_it/models/game_config.dart';
 import 'package:sink_it/models/ship/ship.dart';
+import 'package:sink_it/providers/api_service_provider.dart';
 
 part 'game_state_provider.g.dart';
 
@@ -17,28 +18,31 @@ class GameState extends _$GameState {
     return null;
   }
 
-  void createGame(GameConfig config) {
-    final player1 = Player(
-      id: 'player1_${DateTime.now().millisecondsSinceEpoch}',
-      name: 'Player 1',
-      ships: [],
-      isReady: false,
-    );
+  /// API: Vytvorenie novej hry (volá server)
+  Future<void> createGame(GameConfig config) async {
+    try {
+      // 1. Volaj server API pre vytvorenie hry
+      final api = ref.read(apiServiceProvider);
+      final serverGame = await api.createGame(config);
 
-    final player2 = Player(
-      id: 'player2_${DateTime.now().millisecondsSinceEpoch}',
-      name: 'Player 2',
-      ships: [],
-      isReady: false,
-    );
+      // 2. Player 1 sa pripojí
+      final player1 = await api.joinGame(serverGame.id, 'Player 1');
 
-    state = Game(
-      id: 'game_${DateTime.now().microsecondsSinceEpoch}',
-      config: config,
-      player1: player1,
-      player2: player2,
-      status: GameStatus.setup,
-    );
+      // 3. Player 2 sa pripojí
+      final player2 = await api.joinGame(serverGame.id, 'Player 2');
+
+      // 4. Ulož hru do lokálneho stavu s reálnymi server IDs
+      state = Game(
+        id: serverGame.id, // ← Server ID!
+        config: config,
+        player1: player1, // ← Server player s ID!
+        player2: player2, // ← Server player s ID!
+        status: GameStatus.setup,
+        currentPlayerIndex: 0,
+      );
+    } catch (e) {
+      throw Exception('Failed to create game: $e');
+    }
   }
 
   void sumbitPlayerShips(List<Ship> ships) {
@@ -71,7 +75,7 @@ class GameState extends _$GameState {
         player2: updatedPlayer,
         status: GameStatus.ready,
         winnerId: state!.winnerId,
-        currentPlayerIndex: 2,
+        currentPlayerIndex: state!.currentPlayerIndex,
       );
     }
   }
@@ -96,7 +100,7 @@ class GameState extends _$GameState {
 
   void startGame() {
     if (state == null) return;
-    if (!state!.player1.isReady || !state!.player2.isReady) return;
+    if (!state!.player1!.isReady || !state!.player2!.isReady) return;
 
     state = Game(
       id: state!.id,
@@ -152,6 +156,8 @@ class GameState extends _$GameState {
   }
 }
 
+// ========== COMPUTED PROVIDERS ==========
+
 @riverpod
 Game? currentGame(Ref ref) {
   return ref.watch(gameStateProvider);
@@ -186,7 +192,7 @@ int currentPlayerIndex(Ref ref) {
 bool allPLayersReady(Ref ref) {
   final game = ref.watch(gameStateProvider);
   if (game == null) return false;
-  return game.player1.isReady && game.player2.isReady;
+  return game.player1!.isReady && game.player2!.isReady;
 }
 
 @riverpod
@@ -207,6 +213,7 @@ bool isEndState(Ref ref) {
   return game?.status == GameStatus.end;
 }
 
+@riverpod
 String? winnerID(Ref ref) {
   final game = ref.watch(gameStateProvider);
   return game?.winnerId;
@@ -218,7 +225,6 @@ Player? player1(Ref ref) {
   return game?.player1;
 }
 
-/// Player 2
 @riverpod
 Player? player2(Ref ref) {
   final game = ref.watch(gameStateProvider);
@@ -232,7 +238,7 @@ GameConfig? gameConfigFromGame(Ref ref) {
 }
 
 @riverpod
-GameStatus gameStatus(Ref ref) {
+GameStatus? gameStatus(Ref ref) {
   final game = ref.watch(gameStateProvider);
-  return game!.status;
+  return game?.status;
 }

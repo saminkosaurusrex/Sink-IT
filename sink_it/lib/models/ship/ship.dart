@@ -8,16 +8,19 @@ class Ship {
   final List<ShapeCell> shape;
   // absolute position in main game grid
   final List<Position> placedPositions;
+  final List<Position> hits;
 
   Ship({
     required this.id,
     required this.name,
     required this.shape,
     this.placedPositions = const [],
+    this.hits = const [],
   });
 
   int get size => shape.length;
 
+  bool get isSunk => hits.length == placedPositions.length;
   // Pomocné gettery pre bounding box
   int get width {
     if (shape.isEmpty) return 0;
@@ -32,6 +35,7 @@ class Ship {
   Ship copyWith({
     List<ShapeCell>? shape,
     List<Position>? placedPositions,
+    List<Position>? hits,
     String? name,
   }) {
     return Ship(
@@ -39,6 +43,7 @@ class Ship {
       name: name ?? this.name,
       shape: shape ?? this.shape,
       placedPositions: placedPositions ?? this.placedPositions,
+      hits: hits ?? this.hits,
     );
   }
 

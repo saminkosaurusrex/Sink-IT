@@ -2,33 +2,35 @@
 //Login: xkundrs00
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sink_it/providers/game_config_provider.dart';
 import 'package:sink_it/providers/game_state_provider.dart';
 import 'package:sink_it/providers/ship_editor_provider.dart';
 import 'package:sink_it/screens/player_setup_screen.dart';
 import 'package:sink_it/screens/setup/setting_row.dart';
 import 'package:sink_it/screens/setup/ship_box.dart';
-//import 'package:sink_it/screens/setup/ship_shape_editor.dart';
 import 'package:sink_it/shared/board_size_button.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sink_it/shared/ship_shape_editor.dart';
 import 'package:sink_it/shared/styled_box.dart';
 import 'package:sink_it/shared/styled_button.dart';
 import 'package:sink_it/shared/styled_text.dart';
+import 'package:sink_it/theme.dart';
 
+/// FRONTEND - Setup obrazovka pre konfiguráciu hry
+/// Všetka logika je v provideroch, UI len zobrazuje a volá API
 class SetupScreen extends ConsumerWidget {
   const SetupScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Sledovanie stavu
+    // Sledovanie stavu z providerov
     final currentBoardSize = ref.watch(boardSizeProvider);
     final currentSoundEnabled = ref.watch(soundEnabledProvider);
     final currentAnimationsEnabled = ref.watch(animationsEnabledProvider);
     final currentConfig = ref.watch(gameConfigControllerProvider);
     final currentEditingShip = ref.watch(shipEditorProvider);
 
-    // Controllery
+    // Controllery pre volanie BE API
     final configController = ref.read(gameConfigControllerProvider.notifier);
     final editorController = ref.read(shipEditorProvider.notifier);
 
@@ -39,7 +41,7 @@ class SetupScreen extends ConsumerWidget {
           padding: EdgeInsets.all(16),
           child: Column(
             children: [
-              // Board size
+              // ===== BOARD SIZE =====
               SectionBox(
                 title: StyledTitle('Board Size'),
                 child: Row(
@@ -62,14 +64,14 @@ class SetupScreen extends ConsumerWidget {
               ),
               SizedBox(height: 15),
 
-              // Fleet Composition
+              // ===== FLEET COMPOSITION (Custom Lodě) =====
               SectionBox(
                 title: StyledTitle(
-                  'Fleet Composition ${currentConfig.fleet.length}',
+                  'Fleet Composition (${currentConfig.fleet.length})',
                 ),
                 child: Column(
                   children: [
-                    // Ak nie je editovaná žiadna loď, zobraz zoznam
+                    // Ak NIE je editovaná žiadna loď, zobraz zoznam
                     if (currentEditingShip == null) ...[
                       // Zoznam lodí
                       ...currentConfig.fleet.map((ship) {
@@ -82,6 +84,7 @@ class SetupScreen extends ConsumerWidget {
                               editorController.startEditShip(ship);
                             },
                             onDelete: () {
+                              // Vymaž loď z flotily
                               configController.removeShip(ship.id);
                             },
                           ),
@@ -101,7 +104,7 @@ class SetupScreen extends ConsumerWidget {
                       ),
                     ],
 
-                    // Ak je editovaná loď, zobraz editor
+                    // Ak JE editovaná loď, zobraz editor
                     if (currentEditingShip != null) ...[
                       ShipShapeEditor(maxTiles: 5),
                       SizedBox(height: 16),
@@ -109,6 +112,7 @@ class SetupScreen extends ConsumerWidget {
                       // Tlačidlá Save / Cancel
                       Row(
                         children: [
+                          // Cancel button
                           Expanded(
                             child: SecondaryButton(
                               text: "Cancel",
@@ -118,14 +122,19 @@ class SetupScreen extends ConsumerWidget {
                             ),
                           ),
                           SizedBox(width: 12),
+
+                          // Save button
                           Expanded(
                             child: PrimaryButton(
                               onPressed: () {
                                 final ship = editorController.getCurrentShip();
+
+                                // Validácia
                                 if (ship == null || ship.shape.isEmpty) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       content: Text('Add at least one tile!'),
+                                      backgroundColor: AppTheme.hitRed,
                                     ),
                                   );
                                   return;
@@ -141,7 +150,7 @@ class SetupScreen extends ConsumerWidget {
                                     configController.removeShip(ship.id);
                                   }
 
-                                  // Pridaj/aktualizuj loď cez Controller
+                                  // Pridaj/aktualizuj loď cez Controller API
                                   configController.addShip(
                                     ship.shape,
                                     name: ship.name,
@@ -151,7 +160,10 @@ class SetupScreen extends ConsumerWidget {
                                   editorController.cancel();
                                 } catch (e) {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text(e.toString())),
+                                    SnackBar(
+                                      content: Text(e.toString()),
+                                      backgroundColor: AppTheme.hitRed,
+                                    ),
                                   );
                                 }
                               },
@@ -167,11 +179,12 @@ class SetupScreen extends ConsumerWidget {
 
               SizedBox(height: 15),
 
-              // Game options
+              // ===== GAME OPTIONS =====
               SectionBox(
                 title: StyledTitle('Game Options'),
                 child: Column(
                   children: [
+                    // Sound Effects
                     SettingRow(
                       icon: Icon(
                         Icons.volume_up,
@@ -184,6 +197,8 @@ class SetupScreen extends ConsumerWidget {
                       onChanged: configController.setSoundEnabled,
                     ),
                     SizedBox(height: 12),
+
+                    // Animations
                     SettingRow(
                       icon: Icon(
                         Icons.auto_awesome,
@@ -200,24 +215,68 @@ class SetupScreen extends ConsumerWidget {
               ),
               SizedBox(height: 15),
 
-              // Next button - iba ak nie je editácia
+              // ===== NEXT BUTTON =====
+              // Zobraz len ak NIE je editácia
               if (currentEditingShip == null)
                 PrimaryButton(
                   onPressed: () {
+                    // Validácia - musí byť aspoň jedna loď
                     if (currentConfig.fleet.isEmpty) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Add at least one ship!')),
+                        SnackBar(
+                          content: Text('Add at least one ship!'),
+                          backgroundColor: AppTheme.hitRed,
+                        ),
                       );
                       return;
                     }
+
+                    // Získaj game state controller
                     final gameStateController = ref.read(
                       gameStateProvider.notifier,
                     );
-                    gameStateController.createGame(currentConfig);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (ctx) => PlayerSetupScreen()),
+
+                    // Zobraz loading dialog
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (ctx) => Center(
+                        child: CircularProgressIndicator(
+                          color: AppTheme.primaryRed,
+                        ),
+                      ),
                     );
+
+                    // Vytvor hru na serveri (async)
+                    gameStateController
+                        .createGame(currentConfig)
+                        .then((_) {
+                          // Úspech - zavri loading a naviguj
+                          if (context.mounted) {
+                            Navigator.pop(context); // Zavri loading
+
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (ctx) => PlayerSetupScreen(),
+                              ),
+                            );
+                          }
+                        })
+                        .catchError((e) {
+                          // Chyba - zavri loading a zobraz error
+                          if (context.mounted) {
+                            Navigator.pop(context); // Zavri loading
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Failed to create game: $e'),
+                                backgroundColor: AppTheme.hitRed,
+                                duration: Duration(seconds: 4),
+                              ),
+                            );
+                          }
+                        });
                   },
                   child: StyledTitle('Let\'s place some ships!'),
                 ),

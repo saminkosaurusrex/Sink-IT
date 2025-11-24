@@ -4,6 +4,7 @@ import 'package:sink_it/helpers/ship_placement_helper.dart';
 import 'package:sink_it/models/position.dart';
 import 'package:sink_it/models/ship/ship.dart';
 import 'package:sink_it/providers/game_config_provider.dart';
+import 'package:sink_it/providers/api_service_provider.dart';
 import 'package:sink_it/providers/game_state_provider.dart';
 
 part 'ship_placement_provider.g.dart';
@@ -50,7 +51,6 @@ class ShipPlacement extends _$ShipPlacement {
   @override
   ShipPlacementState build() {
     final fleet = ref.watch(gameConfigControllerProvider).fleet;
-
     return ShipPlacementState.initial(fleet);
   }
 
@@ -84,7 +84,6 @@ class ShipPlacement extends _$ShipPlacement {
       (s) => s.id == state.selectedShip!.id,
     );
 
-    //update or add
     if (existingIndex != -1) {
       updatedPlacedShips[existingIndex] = placedShip;
     } else {
@@ -103,7 +102,6 @@ class ShipPlacement extends _$ShipPlacement {
       nextIndex = nextUnplacedIndex;
     }
 
-    //move to another ship
     state = state.copyWith(
       placedShips: updatedPlacedShips,
       selectedShip: nextSelectedShip,
@@ -131,6 +129,7 @@ class ShipPlacement extends _$ShipPlacement {
     return state.placedShips.length == _fleet.length && !state.isSubmitting;
   }
 
+  /// API: Submit lodí - volá server a aktualizuje lokální stav
   Future<void> submitShips() async {
     if (!canSubmit()) {
       throw Exception('Cannot submit ships yet');
@@ -138,22 +137,30 @@ class ShipPlacement extends _$ShipPlacement {
 
     state = state.copyWith(isSubmitting: true);
 
-    final ships = state.placedShips;
-    final game = ref.read(gameStateProvider.notifier);
-
-    game.sumbitPlayerShips(ships);
-    state = ShipPlacementState.initial([]);
-
     try {
-      // TODO: API call na server
-      // final api = ref.read(apiServiceProvider);
-      // await api.placeShips(gameId, playerId, state.placedShips);
+      // 1. Získej API service a hru
+      final api = ref.read(apiServiceProvider);
+      final gameObj = ref.read(gameStateProvider);
 
-      // Placeholder pro simulaci API volání
-      await Future.delayed(Duration(seconds: 1));
+      if (gameObj == null) {
+        throw Exception('No active game');
+      }
 
-      // Po úspěšném odeslání můžeš resetovat stav nebo navigovat
-      state = state.copyWith(isSubmitting: false);
+      // 2. Získej aktuálního hráče
+      final currentPlayer = gameObj.getCurrentPlayer;
+
+      // 3. Odešli lodě NA SERVER
+      await api.placeShips(gameObj.id, currentPlayer.id, state.placedShips);
+
+      // 4. Označ hráče jako připraveného NA SERVERU
+      await api.setPlayerReady(gameObj.id, currentPlayer.id);
+
+      // 5. Aktualizuj LOKÁLNÍ stav
+      final gameController = ref.read(gameStateProvider.notifier);
+      gameController.sumbitPlayerShips(state.placedShips);
+
+      // 6. Reset pro dalšího hráče
+      state = ShipPlacementState.initial(_fleet);
     } catch (e) {
       state = state.copyWith(isSubmitting: false);
       rethrow;
@@ -178,13 +185,11 @@ bool isSubmitting(Ref ref) {
   return ref.watch(shipPlacementProvider).isSubmitting;
 }
 
-/// Počet umístěných lodí
 @riverpod
 int placedShipsCount(Ref ref) {
   return ref.watch(shipPlacementProvider).placedShips.length;
 }
 
-/// Aktuálně vybraná loď
 @riverpod
 Ship? selectedShip(Ref ref) {
   return ref.watch(shipPlacementProvider).selectedShip;

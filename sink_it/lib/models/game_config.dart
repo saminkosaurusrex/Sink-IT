@@ -20,6 +20,24 @@ class GameConfig {
     List<Ship>? fleet,
   }) : fleet = fleet ?? [];
 
+  factory GameConfig.fromJson(Map<String, dynamic> json) {
+    return GameConfig(
+      boardSize: json['board_size'] ?? 10,
+      soundEnabled: json['sound_enabled'] ?? true,
+      animationsEnabled: json['animations_enabled'] ?? true,
+      fleet: [],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'board_size': boardSize,
+      'max_players': 2,
+      'allow_custom_ships': true,
+      'initial_spells': [],
+    };
+  }
+
   static List<Ship> _getDefaultFleet(int boardSize) {
     if (boardSize == 8) {
       return [
@@ -94,11 +112,4 @@ class GameConfig {
       ),
     ];
   }
-
-  Map<String, dynamic> toJson() => {
-    'board_size': boardSize,
-    'max_players': 2,
-    'allow_custom_ships': false,
-    'initial_spells': [],
-  };
 }

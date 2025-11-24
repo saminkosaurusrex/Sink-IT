@@ -40,7 +40,7 @@ final class GameStateProvider extends $NotifierProvider<GameState, Game?> {
   }
 }
 
-String _$gameStateHash() => r'f78366225301403b386adca502dcadb55c6f012d';
+String _$gameStateHash() => r'ec4b556785764c670ca8f0aa44af0f2ebe6fcbf6';
 
 abstract class _$GameState extends $Notifier<Game?> {
   Game? build();
@@ -305,7 +305,7 @@ final class AllPLayersReadyProvider
   }
 }
 
-String _$allPLayersReadyHash() => r'95c07e019f1cc0ae31046c1016430a8d0b601d91';
+String _$allPLayersReadyHash() => r'e56ae9b896f879ffb18288f596ac052d3d6ccdf8';
 
 @ProviderFor(isSetupState)
 const isSetupStateProvider = IsSetupStateProvider._();
@@ -428,6 +428,47 @@ final class IsEndStateProvider extends $FunctionalProvider<bool, bool, bool>
 
 String _$isEndStateHash() => r'e966e7b140ccd49600158ac48206f874bfc9b184';
 
+@ProviderFor(winnerID)
+const winnerIDProvider = WinnerIDProvider._();
+
+final class WinnerIDProvider
+    extends $FunctionalProvider<String?, String?, String?>
+    with $Provider<String?> {
+  const WinnerIDProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'winnerIDProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$winnerIDHash();
+
+  @$internal
+  @override
+  $ProviderElement<String?> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  String? create(Ref ref) {
+    return winnerID(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(String? value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<String?>(value),
+    );
+  }
+}
+
+String _$winnerIDHash() => r'5290004c6c9b9fab9e98de64acd396daea0f328c';
+
 @ProviderFor(player1)
 const player1Provider = Player1Provider._();
 
@@ -469,17 +510,12 @@ final class Player1Provider
 
 String _$player1Hash() => r'8925378ded86719ea36a03e9f8f5895905941e0f';
 
-/// Player 2
-
 @ProviderFor(player2)
 const player2Provider = Player2Provider._();
-
-/// Player 2
 
 final class Player2Provider
     extends $FunctionalProvider<Player?, Player?, Player?>
     with $Provider<Player?> {
-  /// Player 2
   const Player2Provider._()
     : super(
         from: null,
@@ -561,8 +597,8 @@ String _$gameConfigFromGameHash() =>
 const gameStatusProvider = GameStatusProvider._();
 
 final class GameStatusProvider
-    extends $FunctionalProvider<GameStatus, GameStatus, GameStatus>
-    with $Provider<GameStatus> {
+    extends $FunctionalProvider<GameStatus?, GameStatus?, GameStatus?>
+    with $Provider<GameStatus?> {
   const GameStatusProvider._()
     : super(
         from: null,
@@ -579,21 +615,21 @@ final class GameStatusProvider
 
   @$internal
   @override
-  $ProviderElement<GameStatus> $createElement($ProviderPointer pointer) =>
+  $ProviderElement<GameStatus?> $createElement($ProviderPointer pointer) =>
       $ProviderElement(pointer);
 
   @override
-  GameStatus create(Ref ref) {
+  GameStatus? create(Ref ref) {
     return gameStatus(ref);
   }
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(GameStatus value) {
+  Override overrideWithValue(GameStatus? value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<GameStatus>(value),
+      providerOverride: $SyncValueProvider<GameStatus?>(value),
     );
   }
 }
 
-String _$gameStatusHash() => r'9a9d82fbc8266ddb92f70935f34fb73c6457a6a9';
+String _$gameStatusHash() => r'a61259101367b4bb9d9563f34d0c391f4189d577';

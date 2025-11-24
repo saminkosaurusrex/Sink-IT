@@ -41,7 +41,7 @@ final class ShipPlacementProvider
   }
 }
 
-String _$shipPlacementHash() => r'7ef615a1b9f14487a8bb4cd6dae698cf424c7058';
+String _$shipPlacementHash() => r'882d681bbb7541cd1b2440f9c0e7cc439f403969';
 
 abstract class _$ShipPlacement extends $Notifier<ShipPlacementState> {
   ShipPlacementState build();
@@ -102,16 +102,11 @@ final class IsSubmittingProvider extends $FunctionalProvider<bool, bool, bool>
 
 String _$isSubmittingHash() => r'61f69bd2e6070fa90be126e9c96aaaa62bb98878';
 
-/// Počet umístěných lodí
-
 @ProviderFor(placedShipsCount)
 const placedShipsCountProvider = PlacedShipsCountProvider._();
 
-/// Počet umístěných lodí
-
 final class PlacedShipsCountProvider extends $FunctionalProvider<int, int, int>
     with $Provider<int> {
-  /// Počet umístěných lodí
   const PlacedShipsCountProvider._()
     : super(
         from: null,
@@ -147,17 +142,12 @@ final class PlacedShipsCountProvider extends $FunctionalProvider<int, int, int>
 
 String _$placedShipsCountHash() => r'75e1676e913c9f295cedc79ff40341eaf93dca5a';
 
-/// Aktuálně vybraná loď
-
 @ProviderFor(selectedShip)
 const selectedShipProvider = SelectedShipProvider._();
-
-/// Aktuálně vybraná loď
 
 final class SelectedShipProvider
     extends $FunctionalProvider<Ship?, Ship?, Ship?>
     with $Provider<Ship?> {
-  /// Aktuálně vybraná loď
   const SelectedShipProvider._()
     : super(
         from: null,

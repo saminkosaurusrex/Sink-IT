@@ -4,7 +4,7 @@ class Position {
 
   Position({required this.posX, required this.posY});
 
-  Map<String, dynamic> toJson() => {'posX': posX, 'posY': posY};
+  Map<String, dynamic> toJson() => {'x': posX, 'y': posY};
 
   @override
   bool operator ==(Object other) =>

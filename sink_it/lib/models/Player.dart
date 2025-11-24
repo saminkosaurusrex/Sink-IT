@@ -13,6 +13,9 @@ class Player {
     this.isReady = false,
   });
 
-  factory Player.fromJson(Map<String, dynamic> json) =>
-      Player(id: json['id'], name: json['name'], isReady: json['isReady']);
+  factory Player.fromJson(Map<String, dynamic> json) => Player(
+    id: json['id'],
+    name: json['name'],
+    isReady: json['isReady'] ?? false,
+  );
 }
