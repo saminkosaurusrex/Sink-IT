@@ -11,7 +11,7 @@ import 'package:sink_it/shared/game_board.dart';
 import 'package:sink_it/shared/styled_text.dart';
 import 'package:sink_it/theme.dart';
 
-/// FRONTEND - Hot-seat režim: Obaja hráči vidia oba boardy
+/// FRONTEND - Hot-seat režim: Obaja hráči vidia svoje útočné boardy
 class GameScreen extends ConsumerWidget {
   const GameScreen({super.key});
 
@@ -51,10 +51,11 @@ class GameScreen extends ConsumerWidget {
                 context: context,
                 ref: ref,
                 player: game.player1!,
-                cellStates: gamePlayState.playerBoard,
+                cellStates: gamePlayState.playerBoard, // ✅ P1 útočí na P2
                 isCurrentPlayer: game.currentPlayerIndex == 0,
                 isAttacking: isAttacking,
-                rotated: false, // Normálna orientácia
+                rotated: true,
+                showShips: false, // ✅ Neukáž lode protivníka
               ),
             ),
 
@@ -71,10 +72,11 @@ class GameScreen extends ConsumerWidget {
                 context: context,
                 ref: ref,
                 player: game.player2!,
-                cellStates: gamePlayState.opponentBoard,
+                cellStates: gamePlayState.opponentBoard, // ✅ P2 útočí na P1
                 isCurrentPlayer: game.currentPlayerIndex == 1,
                 isAttacking: isAttacking,
-                rotated: true, // Otočený o 180°
+                rotated: false,
+                showShips: false, // ✅ Neukáž lode protivníka
               ),
             ),
           ],
@@ -92,6 +94,7 @@ class GameScreen extends ConsumerWidget {
     required bool isCurrentPlayer,
     required bool isAttacking,
     required bool rotated,
+    bool showShips = false,
   }) {
     final game = ref.read(gameStateProvider)!;
 
@@ -151,7 +154,7 @@ class GameScreen extends ConsumerWidget {
                     ? (position) => _handleAttack(context, ref, position)
                     : null,
                 interactive: isCurrentPlayer && !isAttacking,
-                showShips: false, // Ukáž lodě oboch hráčov
+                showShips: showShips,
               ),
             ),
           ],

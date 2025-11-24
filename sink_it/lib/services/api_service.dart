@@ -152,13 +152,11 @@ class ApiService {
   }) async {
     try {
       final response = await _client.post(
-        Uri.parse('$baseUrl/gmaes/$gameId/attack'),
+        Uri.parse('$baseUrl/games/$gameId/attack').replace(
+          queryParameters: {'attacker_id': attackerId, 'target_id': target},
+        ),
         headers: _headers,
-        body: ({
-          'attacker_id': attackerId,
-          'target_id': target,
-          'position': pos.toJson(),
-        }),
+        body: jsonEncode({'position': pos.toJson()}),
       );
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
