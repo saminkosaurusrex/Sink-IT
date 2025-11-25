@@ -2,7 +2,7 @@
 //Login: xkundrs00
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:sink_it/models/ship/shape_cell.dart';
+import 'package:sink_it/models/position.dart';
 import 'package:sink_it/models/ship/ship.dart';
 
 part 'ship_editor_provider.g.dart';
@@ -30,11 +30,11 @@ class ShipEditor extends _$ShipEditor {
   void toggleCell(int x, int y) {
     if (state == null) return;
 
-    final cell = ShapeCell(x: x, y: y);
-    final exists = state!.shape.any((c) => c.x == x && c.y == y);
+    final cell = Position(posX: x, posY: y);
+    final exists = state!.shape.any((c) => c.posX == x && c.posY == y);
 
     final newShape = exists
-        ? state!.shape.where((c) => !(c.x == x && c.y == y)).toList()
+        ? state!.shape.where((c) => !(c.posX == x && c.posY == y)).toList()
         : [...state!.shape, cell];
 
     state = state!.copyWith(shape: newShape);
@@ -60,6 +60,6 @@ class ShipEditor extends _$ShipEditor {
 
   bool isCellSelected(int x, int y) {
     if (state == null) return false;
-    return state!.shape.any((cell) => cell.x == x && cell.y == y);
+    return state!.shape.any((cell) => cell.posX == x && cell.posY == y);
   }
 }

@@ -1,11 +1,11 @@
 //Author: Samuel Kundrat
 //Login: xkundrs00
 
-import 'package:sink_it/models/ship/shape_cell.dart';
+import 'package:sink_it/models/position.dart';
 import 'package:sink_it/models/ship/ship.dart';
 
 class ShipShapeHelper {
-  static Ship normalizeAndValidate(List<ShapeCell> cells) {
+  static Ship normalizeAndValidate(List<Position> cells) {
     if (cells.isEmpty) {
       return Ship(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -15,11 +15,11 @@ class ShipShapeHelper {
     }
 
     // Normalize
-    int minX = cells.map((c) => c.x).reduce((a, b) => a < b ? a : b);
-    int minY = cells.map((c) => c.y).reduce((a, b) => a < b ? a : b);
+    int minX = cells.map((c) => c.posX).reduce((a, b) => a < b ? a : b);
+    int minY = cells.map((c) => c.posY).reduce((a, b) => a < b ? a : b);
 
-    List<ShapeCell> normalized = cells.map((cell) {
-      return ShapeCell(x: cell.x - minX, y: cell.y - minY);
+    List<Position> normalized = cells.map((cell) {
+      return Position(posX: cell.posX - minX, posY: cell.posY - minY);
     }).toList();
 
     // Validation
@@ -34,28 +34,28 @@ class ShipShapeHelper {
     );
   }
 
-  static bool areAllCellsConnected(List<ShapeCell> cells) {
+  static bool areAllCellsConnected(List<Position> cells) {
     if (cells.isEmpty) return true;
     if (cells.length == 1) return true;
 
     Set<String> visited = {};
-    Set<String> allCells = cells.map((c) => '${c.x},${c.y}').toSet();
+    Set<String> allCells = cells.map((c) => '${c.posX},${c.posY}').toSet();
 
-    void dfs(ShapeCell cell) {
-      String key = '${cell.x},${cell.y}';
+    void dfs(Position cell) {
+      String key = '${cell.posX},${cell.posY}';
       if (visited.contains(key)) return;
       visited.add(key);
 
       // check all sides
-      List<ShapeCell> neighbors = [
-        ShapeCell(x: cell.x - 1, y: cell.y),
-        ShapeCell(x: cell.x + 1, y: cell.y),
-        ShapeCell(x: cell.x, y: cell.y - 1),
-        ShapeCell(x: cell.x, y: cell.y + 1),
+      List<Position> neighbors = [
+        Position(posX: cell.posX - 1, posY: cell.posY),
+        Position(posX: cell.posX + 1, posY: cell.posY),
+        Position(posX: cell.posX, posY: cell.posY - 1),
+        Position(posX: cell.posX, posY: cell.posY + 1),
       ];
 
       for (var neighbor in neighbors) {
-        String neighborKey = '${neighbor.x},${neighbor.y}';
+        String neighborKey = '${neighbor.posX},${neighbor.posY}';
         if (allCells.contains(neighborKey)) {
           dfs(neighbor);
         }

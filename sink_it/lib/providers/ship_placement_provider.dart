@@ -1,3 +1,6 @@
+//Author: Samuel Kundrat
+//Login: xkundrs00
+
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sink_it/enums/cell_state.dart';
 import 'package:sink_it/helpers/ship_placement_helper.dart';
@@ -75,22 +78,26 @@ class ShipPlacement extends _$ShipPlacement {
       return false;
     }
 
+    //place the ship
     final placedShip = ShipPlacementHelper.placeShip(
       state.selectedShip!,
       position,
     );
 
     final updatedPlacedShips = List<Ship>.from(state.placedShips);
+    //check if it is already placed ship
     final existingIndex = updatedPlacedShips.indexWhere(
       (s) => s.id == state.selectedShip!.id,
     );
 
+    //update placed or add to placed
     if (existingIndex != -1) {
       updatedPlacedShips[existingIndex] = placedShip;
     } else {
       updatedPlacedShips.add(placedShip);
     }
 
+    //find index of next ship to place
     final nextUnplacedIndex = _fleet.indexWhere(
       (s) => !updatedPlacedShips.any((ps) => ps.id == s.id),
     );
@@ -103,12 +110,14 @@ class ShipPlacement extends _$ShipPlacement {
       nextIndex = nextUnplacedIndex;
     }
 
+    //update state
     state = state.copyWith(
       placedShips: updatedPlacedShips,
       selectedShip: nextSelectedShip,
       selectedShipIndex: nextIndex,
     );
 
+    // make sound of placing the ship
     final game = ref.read(gameStateProvider);
     if (game!.config.soundEnabled) {
       SoundManager().miss();
@@ -135,7 +144,6 @@ class ShipPlacement extends _$ShipPlacement {
     return state.placedShips.length == _fleet.length && !state.isSubmitting;
   }
 
-  /// API: Submit lodí - volá server a aktualizuje lokální stav
   Future<void> submitShips() async {
     if (!canSubmit()) {
       throw Exception('Cannot submit ships yet');
@@ -144,7 +152,6 @@ class ShipPlacement extends _$ShipPlacement {
     state = state.copyWith(isSubmitting: true);
 
     try {
-      // 1. Získej API service a hru
       final api = ref.read(apiServiceProvider);
       final gameObj = ref.read(gameStateProvider);
 
@@ -152,20 +159,16 @@ class ShipPlacement extends _$ShipPlacement {
         throw Exception('No active game');
       }
 
-      // 2. Získej aktuálního hráče
       final currentPlayer = gameObj.getCurrentPlayer;
 
-      // 3. Odešli lodě NA SERVER
       await api.placeShips(gameObj.id, currentPlayer.id, state.placedShips);
 
-      // 4. Označ hráče jako připraveného NA SERVERU
       await api.setPlayerReady(gameObj.id, currentPlayer.id);
 
-      // 5. Aktualizuj LOKÁLNÍ stav
       final gameController = ref.read(gameStateProvider.notifier);
       gameController.sumbitPlayerShips(state.placedShips);
 
-      // 6. Reset pro dalšího hráče
+      //reset fro next player to place ships
       state = ShipPlacementState.initial(_fleet);
     } catch (e) {
       state = state.copyWith(isSubmitting: false);
@@ -175,14 +178,6 @@ class ShipPlacement extends _$ShipPlacement {
 
   void reset() {
     state = ShipPlacementState.initial(_fleet);
-  }
-
-  void removeShip(String shipId) {
-    final updatedPlacedShips = state.placedShips
-        .where((s) => s.id != shipId)
-        .toList();
-
-    state = state.copyWith(placedShips: updatedPlacedShips);
   }
 }
 

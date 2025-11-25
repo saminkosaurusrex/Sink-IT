@@ -2,13 +2,12 @@
 //Login: xkundrs00
 
 import 'package:sink_it/models/position.dart';
-import 'package:sink_it/models/ship/shape_cell.dart';
 
 class Ship {
   final String id;
   final String name;
   // relative positions in ship creation grid
-  final List<ShapeCell> shape;
+  final List<Position> shape;
   // absolute position in main game grid
   final List<Position> placedPositions;
   final List<Position> hits;
@@ -26,7 +25,7 @@ class Ship {
   bool get isSunk => hits.length == placedPositions.length;
 
   Ship copyWith({
-    List<ShapeCell>? shape,
+    List<Position>? shape,
     List<Position>? placedPositions,
     List<Position>? hits,
     String? name,

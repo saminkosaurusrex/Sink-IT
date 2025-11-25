@@ -13,8 +13,8 @@ class ShipPlacementHelper {
   ) {
     //check if ship is inside the board
     for (var cell in ship.shape) {
-      final x = startPosition.posX + cell.x;
-      final y = startPosition.posY + cell.y;
+      final x = startPosition.posX + cell.posX;
+      final y = startPosition.posY + cell.posX;
 
       if (x < 0 || x >= borderSize || y < 0 || y >= borderSize) {
         return false;
@@ -23,8 +23,8 @@ class ShipPlacementHelper {
     //position on board
     final newPosition = ship.shape.map((cell) {
       return Position(
-        posX: startPosition.posX + cell.x,
-        posY: startPosition.posY + cell.y,
+        posX: startPosition.posX + cell.posX,
+        posY: startPosition.posY + cell.posY,
       );
     }).toSet();
 
@@ -56,8 +56,8 @@ class ShipPlacementHelper {
   static Ship placeShip(Ship ship, Position startPosition) {
     final positions = ship.shape.map((cell) {
       return Position(
-        posX: startPosition.posX + cell.x,
-        posY: startPosition.posY + cell.y,
+        posX: startPosition.posX + cell.posX,
+        posY: startPosition.posY + cell.posY,
       );
     }).toList();
     return ship.copyWith(placedPositions: positions);

@@ -4,7 +4,7 @@
 import 'package:sink_it/helpers/ship_helper.dart';
 import 'package:sink_it/models/game_config.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:sink_it/models/ship/shape_cell.dart';
+import 'package:sink_it/models/position.dart';
 import 'package:sink_it/models/ship/ship.dart';
 part 'game_config_provider.g.dart';
 
@@ -47,7 +47,7 @@ class GameConfigController extends _$GameConfigController {
     );
   }
 
-  void addShip(List<ShapeCell> cells, {String? name}) {
+  void addShip(List<Position> cells, {String? name}) {
     try {
       final newShip = ShipShapeHelper.normalizeAndValidate(cells);
       final ship = Ship(
