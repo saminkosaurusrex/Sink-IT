@@ -16,10 +16,6 @@ part 'game_play_provider.g.dart';
 class GamePlay extends _$GamePlay {
   @override
   GamePlayState build() {
-    // ❌ ODSTRÁŇ ref.watch - nechceš automatický rebuild!
-    // final game = ref.watch(gameStateProvider);
-
-    // ✅ Vráť prázdny state
     return const GamePlayState();
   }
 
@@ -30,42 +26,13 @@ class GamePlay extends _$GamePlay {
     state = GamePlayState(playerBoard: {}, opponentBoard: {});
   }
 
-  Map<Position, CellState> _buildPlayerBoardState(Player player) {
-    final Map<Position, CellState> result = {};
-
-    for (var ship in player.ships) {
-      for (var position in ship.placedPositions) {
-        final isHit = ship.hits.any(
-          (h) => h.posX == position.posX && h.posY == position.posY,
-        );
-        result[position] = isHit ? CellState.hit : CellState.ship;
-      }
-    }
-    return result;
-  }
-
   void reset() {
     state = const GamePlayState();
-  }
-
-  void refreshBoards() {
-    final game = ref.read(gameStateProvider);
-    if (game == null) return;
-    state = GamePlayState(
-      playerBoard: _buildPlayerBoardState(game.getCurrentPlayer),
-      opponentBoard: state.opponentBoard,
-    );
   }
 
   Future<void> attack(Position position) async {
     final game = ref.read(gameStateProvider);
     if (game == null) return;
-    print('🎮 ATTACK DEBUG:');
-    print('CurrentPlayerIndex: ${game.currentPlayerIndex}');
-    print('Player 1 ID: ${game.player1?.id}');
-    print('Player 2 ID: ${game.player2?.id}');
-    print('CurrentPlayer: ${game.getCurrentPlayer.id}');
-    print('Opponent: ${game.getCurrentOpponent.id}');
 
     final isPlayer1Attacking = game.currentPlayerIndex == 0;
 
@@ -84,12 +51,6 @@ class GamePlay extends _$GamePlay {
       final currentPlayer = game.getCurrentPlayer;
       final opponent = game.getCurrentOpponent;
 
-      // ✅ PRIDAJ DEBUG PRED POSLANÍM
-      print('🚀 SENDING ATTACK:');
-      print('Attacker ID: ${currentPlayer.id}');
-      print('Target ID: ${opponent.id}');
-      print('Position: ${position.posX}, ${position.posY}');
-
       final response = await api.attack(
         gameId: game.id,
         attackerId: currentPlayer.id,
@@ -97,111 +58,62 @@ class GamePlay extends _$GamePlay {
         pos: position,
       );
 
-      // ✅ Updatuj správny board
+      print('📡 SERVER RESPONSE:');
+      print('Hit: ${response.hit}');
+      print('Sunk ship: ${response.sunkShip}');
+      print('Ships remaining: ${response.shipsRemaining}');
+
+      // Update board based on who's attacking
       if (isPlayer1Attacking) {
-        // Player 1 útočí → updatuj playerBoard
         final updatedPlayerBoard = Map<Position, CellState>.from(
           state.playerBoard,
         );
+        updatedPlayerBoard[position] = response.hit
+            ? CellState.hit
+            : CellState.miss;
 
-        if (response.hit) {
-          updatedPlayerBoard[position] = CellState.hit;
-          Ship? hitShip;
-          for (var ship in opponent.ships) {
-            if (ship.placedPositions.any(
-              (p) => p.posX == position.posX && p.posY == position.posY,
-            )) {
-              hitShip = ship;
-              break;
-            }
-          }
-
-          // ✅ Pridaj hit do lodí
-          if (hitShip != null &&
-              !hitShip.hits.any(
-                (h) => h.posX == position.posX && h.posY == position.posY,
-              )) {
-            final updatedHits = [...hitShip.hits, position];
-
-            // Aktualizuj loď v zozname lodí
-            final shipIndex = opponent.ships.indexOf(hitShip);
-            opponent.ships[shipIndex] = hitShip.copyWith(hits: updatedHits);
-          }
-
-          state = state.copyWith(
-            playerBoard: updatedPlayerBoard, // ✅ Updatuj P1 board
-            lastAttackResult: response.sunkShip != null
-                ? 'You sunk ${response.sunkShip}!'
-                : 'Hit!',
-            isAttacking: false,
-          );
-        } else {
-          updatedPlayerBoard[position] = CellState.miss;
-          state = state.copyWith(
-            playerBoard: updatedPlayerBoard, // ✅ Updatuj P1 board
-            lastAttackResult: 'Miss!',
-            isAttacking: false,
-          );
-        }
+        state = state.copyWith(
+          playerBoard: updatedPlayerBoard,
+          lastAttackResult: response.sunkShip != null
+              ? 'You sunk ${response.sunkShip}!'
+              : (response.hit ? 'Hit!' : 'Miss!'),
+          isAttacking: false,
+        );
       } else {
-        // Player 2 útočí → updatuj opponentBoard
         final updatedOpponentBoard = Map<Position, CellState>.from(
           state.opponentBoard,
         );
+        updatedOpponentBoard[position] = response.hit
+            ? CellState.hit
+            : CellState.miss;
 
-        if (response.hit) {
-          updatedOpponentBoard[position] = CellState.hit;
-          Ship? hitShip;
-          for (var ship in opponent.ships) {
-            if (ship.placedPositions.any(
-              (p) => p.posX == position.posX && p.posY == position.posY,
-            )) {
-              hitShip = ship;
-              break;
-            }
-          }
-
-          // ✅ Pridaj hit do lodí
-          if (hitShip != null &&
-              !hitShip.hits.any(
-                (h) => h.posX == position.posX && h.posY == position.posY,
-              )) {
-            final updatedHits = [...hitShip.hits, position];
-
-            // Aktualizuj loď v zozname lodí
-            final shipIndex = opponent.ships.indexOf(hitShip);
-            opponent.ships[shipIndex] = hitShip.copyWith(hits: updatedHits);
-          }
-          state = state.copyWith(
-            opponentBoard: updatedOpponentBoard, // ✅ Updatuj P2 board
-            lastAttackResult: response.sunkShip != null
-                ? 'You sunk ${response.sunkShip}!'
-                : 'Hit!',
-            isAttacking: false,
-          );
-        } else {
-          updatedOpponentBoard[position] = CellState.miss;
-          state = state.copyWith(
-            opponentBoard: updatedOpponentBoard, // ✅ Updatuj P2 board
-            lastAttackResult: 'Miss!',
-            isAttacking: false,
-          );
-        }
+        state = state.copyWith(
+          opponentBoard: updatedOpponentBoard,
+          lastAttackResult: response.sunkShip != null
+              ? 'You sunk ${response.sunkShip}!'
+              : (response.hit ? 'Hit!' : 'Miss!'),
+          isAttacking: false,
+        );
       }
 
-      final allShipsSunk = opponent.ships.every((ship) => ship.isSunk);
-
-      if (allShipsSunk) {
+      // ✅ Skontroluj víťaza pomocou ships_remaining
+      if (response.shipsRemaining == 0) {
+        print('🏆 WINNER DETECTED!');
         final gameController = ref.read(gameStateProvider.notifier);
         gameController.setWinner(currentPlayer.id);
-        return; // ✅ Ukončí metódu, neprepne ťah
+        return;
       }
 
-      final gameController = ref.read(gameStateProvider.notifier);
+      // ✅ Prepni ťah iba ak MISS
       if (!response.hit) {
+        print('❌ MISS - Switching turn');
+        final gameController = ref.read(gameStateProvider.notifier);
         gameController.switchTurn();
+      } else {
+        print('✅ HIT - Same player continues');
       }
     } catch (e) {
+      print('❌ ERROR: $e');
       state = state.copyWith(isAttacking: false);
       throw Exception("Attack failed: $e");
     }

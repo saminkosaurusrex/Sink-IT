@@ -4,8 +4,14 @@ class AttackResponse {
   final bool hit;
   final String? sunkShip;
   final List<Position> affectedPos;
+  final int shipsRemaining;
 
-  AttackResponse({required this.hit, this.sunkShip, required this.affectedPos});
+  AttackResponse({
+    required this.hit,
+    this.sunkShip,
+    required this.affectedPos,
+    required this.shipsRemaining,
+  });
 
   factory AttackResponse.fromJson(Map<String, dynamic> json) {
     return AttackResponse(
@@ -14,6 +20,7 @@ class AttackResponse {
       affectedPos: (json['affected_positions'] as List)
           .map((pos) => Position(posX: pos['x'], posY: pos['y']))
           .toList(),
+      shipsRemaining: json['ships_remaining'],
     );
   }
 }
