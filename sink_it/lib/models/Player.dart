@@ -18,4 +18,19 @@ class Player {
     name: json['name'],
     isReady: json['isReady'] ?? false,
   );
+
+  Player copyWith({
+    String? id,
+    String? name,
+    List<Ship>? ships,
+    bool? isReady,
+    // ... ostatné parametre podľa tvojho modelu
+  }) {
+    return Player(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      ships: ships ?? this.ships,
+      isReady: isReady ?? this.isReady,
+    );
+  }
 }

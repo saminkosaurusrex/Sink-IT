@@ -3,6 +3,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:sink_it/providers/game_config_provider.dart';
 import 'package:sink_it/providers/game_state_provider.dart';
 import 'package:sink_it/providers/ship_placement_provider.dart';
@@ -14,22 +15,95 @@ import 'package:sink_it/shared/styled_button.dart';
 import 'package:sink_it/shared/styled_text.dart';
 import 'package:sink_it/theme.dart';
 
-class PlayerSetupScreen extends ConsumerWidget {
+// ✅ Provider pre edit mode
+final isEditingNameProvider = StateProvider<bool>((ref) => false);
+
+// ✅ ZMEŇ NA ConsumerStatefulWidget
+class PlayerSetupScreen extends ConsumerStatefulWidget {
   const PlayerSetupScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<PlayerSetupScreen> createState() => _PlayerSetupScreenState();
+}
+
+class _PlayerSetupScreenState extends ConsumerState<PlayerSetupScreen> {
+  late TextEditingController _nameController;
+  final FocusNode _focusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final gameConfig = ref.watch(gameConfigControllerProvider);
     final placementController = ref.read(shipPlacementProvider.notifier);
     final placementState = ref.watch(shipPlacementProvider);
     final isSubmitting = ref.watch(isSubmittingProvider);
 
     final currentPlayerName = ref.watch(currentPlayerNameProvider);
+    final isEditingName = ref.watch(isEditingNameProvider);
+
+    // Update controller when name changes
+    if (_nameController.text != currentPlayerName && !isEditingName) {
+      _nameController.text = currentPlayerName;
+    }
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('$currentPlayerName Setup'),
+        title: isEditingName
+            ? TextField(
+                controller: _nameController,
+                focusNode: _focusNode,
+                autofocus: true,
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  hintText: 'Enter player name',
+                  hintStyle: TextStyle(color: Colors.white54),
+                ),
+                onSubmitted: (value) {
+                  if (value.trim().isNotEmpty) {
+                    ref
+                        .read(gameStateProvider.notifier)
+                        .updatePlayerName(value.trim());
+                  }
+                  ref.read(isEditingNameProvider.notifier).state = false;
+                },
+              )
+            : Text('$currentPlayerName Setup'),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: Icon(isEditingName ? Icons.check : Icons.edit),
+            onPressed: () {
+              if (isEditingName) {
+                final newName = _nameController.text.trim();
+                if (newName.isNotEmpty) {
+                  ref
+                      .read(gameStateProvider.notifier)
+                      .updatePlayerName(newName);
+                }
+                ref.read(isEditingNameProvider.notifier).state = false;
+              } else {
+                _nameController.text = currentPlayerName;
+                ref.read(isEditingNameProvider.notifier).state = true;
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  _focusNode.requestFocus();
+                });
+              }
+            },
+            tooltip: isEditingName ? 'Confirm' : 'Edit player name',
+          ),
+        ],
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -44,7 +118,6 @@ class PlayerSetupScreen extends ConsumerWidget {
                     title: StyledTitle('Fleet Composition'),
                     child: Column(
                       children: gameConfig.fleet.asMap().entries.map((entry) {
-                        //final index = entry.key;
                         final ship = entry.value;
                         final isPlaced = placementController.isShipPlaced(
                           ship.id,
@@ -106,7 +179,6 @@ class PlayerSetupScreen extends ConsumerWidget {
                   PrimaryButton(
                     onPressed: !isSubmitting && placementController.canSubmit()
                         ? () async {
-                            // uloženie lodí do GameState
                             await placementController.submitShips();
                             final gameReady = ref.watch(
                               allPLayersReadyProvider,

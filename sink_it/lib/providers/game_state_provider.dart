@@ -156,6 +156,34 @@ class GameState extends _$GameState {
     );
   }
 
+  void updatePlayerName(String newName) {
+    if (state == null) return;
+
+    final currentIndex = state!.currentPlayerIndex;
+
+    if (currentIndex == 0 && state!.player1 != null) {
+      state = Game(
+        id: state!.id,
+        config: state!.config,
+        player1: state!.player1!.copyWith(name: newName),
+        player2: state!.player2,
+        status: state!.status,
+        winnerId: state!.winnerId,
+        currentPlayerIndex: state!.currentPlayerIndex,
+      );
+    } else if (currentIndex == 1 && state!.player2 != null) {
+      state = Game(
+        id: state!.id,
+        config: state!.config,
+        player1: state!.player1,
+        player2: state!.player2!.copyWith(name: newName),
+        status: state!.status,
+        winnerId: state!.winnerId,
+        currentPlayerIndex: state!.currentPlayerIndex,
+      );
+    }
+  }
+
   Player? getCurrentPlayer() {
     return state?.getCurrentPlayer;
   }
