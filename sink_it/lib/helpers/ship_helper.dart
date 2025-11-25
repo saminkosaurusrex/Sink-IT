@@ -1,3 +1,6 @@
+//Author: Samuel Kundrat
+//Login: xkundrs00
+
 import 'package:sink_it/models/ship/shape_cell.dart';
 import 'package:sink_it/models/ship/ship.dart';
 
@@ -43,7 +46,7 @@ class ShipShapeHelper {
       if (visited.contains(key)) return;
       visited.add(key);
 
-      // Skontroluj 4 smery (hore, dole, vľavo, vpravo)
+      // check all sides
       List<ShapeCell> neighbors = [
         ShapeCell(x: cell.x - 1, y: cell.y),
         ShapeCell(x: cell.x + 1, y: cell.y),

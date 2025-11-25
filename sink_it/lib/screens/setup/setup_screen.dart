@@ -135,6 +135,7 @@ class SetupScreen extends ConsumerWidget {
                                     SnackBar(
                                       content: Text('Add at least one tile!'),
                                       backgroundColor: AppTheme.hitRed,
+                                      duration: Duration(seconds: 2),
                                     ),
                                   );
                                   return;
@@ -163,6 +164,7 @@ class SetupScreen extends ConsumerWidget {
                                     SnackBar(
                                       content: Text(e.toString()),
                                       backgroundColor: AppTheme.hitRed,
+                                      duration: const Duration(seconds: 2),
                                     ),
                                   );
                                 }
@@ -226,6 +228,7 @@ class SetupScreen extends ConsumerWidget {
                         SnackBar(
                           content: Text('Add at least one ship!'),
                           backgroundColor: AppTheme.hitRed,
+                          duration: Duration(seconds: 2),
                         ),
                       );
                       return;

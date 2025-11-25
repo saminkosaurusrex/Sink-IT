@@ -1,3 +1,6 @@
+//Author: Samuel Kundrat
+//Login: xkundrs00
+
 enum GameStatus {
   ready,
   setup,

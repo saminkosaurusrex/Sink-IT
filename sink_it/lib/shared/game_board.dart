@@ -68,7 +68,7 @@ class GameBoard extends StatelessWidget {
   Color _getCellColor(CellState cellState) {
     switch (cellState) {
       case CellState.empty:
-        return const Color.fromARGB(255, 111, 221, 15);
+        return const Color.fromARGB(255, 54, 190, 208);
       case CellState.hit:
         return AppTheme.hitRed;
       case CellState.miss:

@@ -1,5 +1,5 @@
-//Author: Samuel Kudnrat
-//login: xkundrs00
+//Author: Samuel Kundrat
+//Login: xkundrs00
 
 class ApiException implements Exception {
   final String message;

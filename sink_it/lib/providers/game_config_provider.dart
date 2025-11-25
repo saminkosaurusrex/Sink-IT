@@ -6,7 +6,6 @@ import 'package:sink_it/models/game_config.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sink_it/models/ship/shape_cell.dart';
 import 'package:sink_it/models/ship/ship.dart';
-
 part 'game_config_provider.g.dart';
 
 @riverpod
@@ -33,19 +32,11 @@ class GameConfigController extends _$GameConfigController {
   }
 
   void setSoundEnabled(bool soundEnabled) {
-    state = GameConfig(
-      boardSize: state.boardSize,
-      soundEnabled: soundEnabled,
-      animationsEnabled: state.animationsEnabled,
-    );
+    state = state.copyWith(soundEnabled: soundEnabled);
   }
 
   void setAnimationsEnabled(bool animationsEnabled) {
-    state = GameConfig(
-      boardSize: state.boardSize,
-      soundEnabled: state.soundEnabled,
-      animationsEnabled: animationsEnabled,
-    );
+    state = state.copyWith(animationsEnabled: animationsEnabled);
   }
 
   void resetToDefaults() {
@@ -64,22 +55,14 @@ class GameConfigController extends _$GameConfigController {
         name: name ?? newShip.name,
         shape: newShip.shape,
       );
-      state = GameConfig(
-        boardSize: state.boardSize,
-        animationsEnabled: state.animationsEnabled,
-        soundEnabled: state.soundEnabled,
-        fleet: [...state.fleet, ship],
-      );
+      state = state.copyWith(fleet: [...state.fleet, ship]);
     } catch (e) {
       throw Exception('Can\'t add the ship: ${e.toString()}');
     }
   }
 
   void removeShip(String shipId) {
-    state = GameConfig(
-      boardSize: state.boardSize,
-      soundEnabled: state.soundEnabled,
-      animationsEnabled: state.animationsEnabled,
+    state = state.copyWith(
       fleet: state.fleet.where((ship) => ship.id != shipId).toList(),
     );
   }

@@ -1,6 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sink_it/enums/cell_state.dart';
 import 'package:sink_it/helpers/ship_placement_helper.dart';
+import 'package:sink_it/managers/sound_manager.dart';
 import 'package:sink_it/models/position.dart';
 import 'package:sink_it/models/ship/ship.dart';
 import 'package:sink_it/providers/game_config_provider.dart';
@@ -107,6 +108,11 @@ class ShipPlacement extends _$ShipPlacement {
       selectedShip: nextSelectedShip,
       selectedShipIndex: nextIndex,
     );
+
+    final game = ref.read(gameStateProvider);
+    if (game!.config.soundEnabled) {
+      SoundManager().miss();
+    }
 
     return true;
   }

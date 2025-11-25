@@ -3,7 +3,7 @@
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sink_it/enums/game_status.dart';
-import 'package:sink_it/models/Player.dart';
+import 'package:sink_it/models/player.dart';
 import 'package:sink_it/models/game.dart';
 import 'package:sink_it/models/game_config.dart';
 import 'package:sink_it/models/ship/ship.dart';

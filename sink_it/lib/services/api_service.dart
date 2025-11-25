@@ -2,7 +2,7 @@
 // login xkundrs00
 import 'package:http/http.dart' as http;
 import 'package:sink_it/exceptions/api_exception.dart';
-import 'package:sink_it/models/Player.dart';
+import 'package:sink_it/models/player.dart';
 import 'dart:convert';
 import 'package:sink_it/models/game.dart';
 import 'package:sink_it/models/game_config.dart';

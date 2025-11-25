@@ -1,4 +1,4 @@
-//Author: Samuel Kundrat
+//Author: Samuel Kudnrat
 //Login: xkundrs00
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -7,30 +7,26 @@ import 'package:sink_it/models/ship/ship.dart';
 
 part 'ship_editor_provider.g.dart';
 
-/// Controller pre editáciu JEDNEJ lode
-/// Drží dočasný stav počas editácie v gride
+// boat edditor
 @riverpod
 class ShipEditor extends _$ShipEditor {
   @override
   Ship? build() {
-    return null; // Žiadna loď nie je editovaná
+    return null;
   }
 
-  /// Začne editáciu novej lode
   void startNewShip() {
     state = Ship(
       id: DateTime.now().microsecondsSinceEpoch.toString(),
       name: 'New Boat',
-      shape: [], // Prázdny tvar
+      shape: [],
     );
   }
 
-  /// Začne editáciu existujúcej lode
   void startEditShip(Ship ship) {
-    state = ship.copyWith(); // Kópia pre bezpečnú editáciu
+    state = ship.copyWith();
   }
 
-  /// Toggle bunky v gride (pridať/odobrať)
   void toggleCell(int x, int y) {
     if (state == null) return;
 
@@ -44,29 +40,24 @@ class ShipEditor extends _$ShipEditor {
     state = state!.copyWith(shape: newShape);
   }
 
-  /// Zmena názvu lode
   void setName(String name) {
     if (state == null) return;
     state = state!.copyWith(name: name);
   }
 
-  /// Vyčistenie celého gridu
   void clearShape() {
     if (state == null) return;
     state = state!.copyWith(shape: []);
   }
 
-  /// Získanie aktuálnej editovanej lode
   Ship? getCurrentShip() {
     return state;
   }
 
-  /// Ukončenie editácie (vyčistenie stavu)
   void cancel() {
     state = null;
   }
 
-  /// Kontrola, či je bunka vybraná
   bool isCellSelected(int x, int y) {
     if (state == null) return false;
     return state!.shape.any((cell) => cell.x == x && cell.y == y);

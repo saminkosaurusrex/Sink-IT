@@ -1,3 +1,6 @@
+//Author: Samuel Kundrat
+//Login: xkundrs00
+
 import 'package:sink_it/models/position.dart';
 import 'package:sink_it/models/ship/shape_cell.dart';
 
@@ -21,16 +24,6 @@ class Ship {
   int get size => shape.length;
 
   bool get isSunk => hits.length == placedPositions.length;
-  // Pomocné gettery pre bounding box
-  int get width {
-    if (shape.isEmpty) return 0;
-    return shape.map((c) => c.x).reduce((a, b) => a > b ? a : b) + 1;
-  }
-
-  int get height {
-    if (shape.isEmpty) return 0;
-    return shape.map((c) => c.y).reduce((a, b) => a > b ? a : b) + 1;
-  }
 
   Ship copyWith({
     List<ShapeCell>? shape,

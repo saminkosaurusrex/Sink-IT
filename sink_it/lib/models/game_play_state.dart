@@ -1,5 +1,5 @@
-//Author: Samuel Kundrart
-//login: Xkundrs00
+//Author: Samuel Kundrat
+//Login: xkundrs00
 
 import 'package:sink_it/enums/cell_state.dart';
 import 'package:sink_it/models/position.dart';

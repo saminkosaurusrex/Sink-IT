@@ -1,3 +1,6 @@
+//Author: Samuel Kundrat
+//Login: xkundrs00
+
 class ShapeCell {
   final int x;
   final int y;

@@ -118,7 +118,7 @@ class GameScreen extends ConsumerWidget {
         padding: EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: isCurrentPlayer
-              ? AppTheme.primaryRed.withOpacity(0.1)
+              ? AppTheme.primaryRed.withAlpha(50)
               : AppTheme.cardBackground,
           border: Border.all(
             color: isCurrentPlayer ? AppTheme.primaryRed : Colors.transparent,
@@ -184,15 +184,12 @@ class GameScreen extends ConsumerWidget {
         .attack(position)
         .then((_) {
           final result = ref.read(lastAttackResultProvider);
-          if (context.mounted && result != null) {
+          if (context.mounted && result != null && result.contains('sunk')) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(result),
-                backgroundColor:
-                    result.contains('Hit') || result.contains('sunk')
-                    ? Colors.green
-                    : Colors.orange,
-                duration: Duration(seconds: 2),
+                backgroundColor: Colors.orange,
+                duration: Duration(seconds: 1),
               ),
             );
           }
@@ -203,6 +200,7 @@ class GameScreen extends ConsumerWidget {
               SnackBar(
                 content: Text('Attack failed: $e'),
                 backgroundColor: AppTheme.hitRed,
+                duration: Duration(seconds: 1),
               ),
             );
           }

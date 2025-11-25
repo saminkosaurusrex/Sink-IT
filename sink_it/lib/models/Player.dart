@@ -1,3 +1,6 @@
+//Author: Samuel Kundrat
+//Login: xkundrs00
+
 import 'package:sink_it/models/ship/ship.dart';
 
 class Player {
@@ -24,7 +27,6 @@ class Player {
     String? name,
     List<Ship>? ships,
     bool? isReady,
-    // ... ostatné parametre podľa tvojho modelu
   }) {
     return Player(
       id: id ?? this.id,

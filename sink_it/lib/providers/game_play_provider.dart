@@ -2,14 +2,12 @@
 //Login: xkundrs00
 
 import 'package:sink_it/enums/cell_state.dart';
-import 'package:sink_it/models/Player.dart';
+import 'package:sink_it/managers/sound_manager.dart';
 import 'package:sink_it/models/game_play_state.dart';
 import 'package:sink_it/models/position.dart';
-import 'package:sink_it/models/ship/ship.dart';
 import 'package:sink_it/providers/api_service_provider.dart';
 import 'package:sink_it/providers/game_state_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-
 part 'game_play_provider.g.dart';
 
 @Riverpod(keepAlive: true)
@@ -41,7 +39,8 @@ class GamePlay extends _$GamePlay {
         : state.opponentBoard;
 
     if (boardToCheck.containsKey(position)) {
-      throw Exception("Already attacked this position!");
+      return;
+      //throw Exception("Already attacked this position!");
     }
 
     state = state.copyWith(isAttacking: true);
@@ -58,11 +57,13 @@ class GamePlay extends _$GamePlay {
         pos: position,
       );
 
-      print('📡 SERVER RESPONSE:');
-      print('Hit: ${response.hit}');
-      print('Sunk ship: ${response.sunkShip}');
-      print('Ships remaining: ${response.shipsRemaining}');
-
+      if (game.config.soundEnabled) {
+        if (response.hit) {
+          SoundManager().hit();
+        } else {
+          SoundManager().miss();
+        }
+      }
       // Update board based on who's attacking
       if (isPlayer1Attacking) {
         final updatedPlayerBoard = Map<Position, CellState>.from(
@@ -96,24 +97,17 @@ class GamePlay extends _$GamePlay {
         );
       }
 
-      // ✅ Skontroluj víťaza pomocou ships_remaining
       if (response.shipsRemaining == 0) {
-        print('🏆 WINNER DETECTED!');
         final gameController = ref.read(gameStateProvider.notifier);
         gameController.setWinner(currentPlayer.id);
         return;
       }
-
-      // ✅ Prepni ťah iba ak MISS
+      //hotSeat
       if (!response.hit) {
-        print('❌ MISS - Switching turn');
         final gameController = ref.read(gameStateProvider.notifier);
         gameController.switchTurn();
-      } else {
-        print('✅ HIT - Same player continues');
       }
     } catch (e) {
-      print('❌ ERROR: $e');
       state = state.copyWith(isAttacking: false);
       throw Exception("Attack failed: $e");
     }

@@ -1,3 +1,6 @@
+//Author: Samuel Kundrat
+//Login: xkundrs00
+
 import 'package:sink_it/models/position.dart';
 import 'package:sink_it/models/ship/ship.dart';
 
@@ -17,6 +20,7 @@ class ShipPlacementHelper {
         return false;
       }
     }
+    //position on board
     final newPosition = ship.shape.map((cell) {
       return Position(
         posX: startPosition.posX + cell.x,
@@ -26,16 +30,15 @@ class ShipPlacementHelper {
 
     //check if ship isnt over any other ship (ale ignoruj samotnú loď)
     for (var placedShip in placedShips) {
-      // Ak je to tá istá loď, preskočí ju
       if (placedShip.id == ship.id) {
         continue;
       }
       final existingPosition = placedShip.placedPositions.toSet();
-      // direct overlap
+      // check if there is intersetion in positions of new ship and already palced ship
       if (newPosition.intersection(existingPosition).isNotEmpty) {
         return false;
       }
-      // check adjacency: require at least one cell gap (no touching, including diagonals)
+      // check for no contact(one cell gap between ships)
       for (var newPos in newPosition) {
         for (var existPos in existingPosition) {
           final dx = (newPos.posX - existPos.posX).abs();

@@ -1,3 +1,6 @@
+//Author: Samuel Kundrat
+//Login: xkundrs00
+
 import 'package:sink_it/models/position.dart';
 
 class AttackResponse {
