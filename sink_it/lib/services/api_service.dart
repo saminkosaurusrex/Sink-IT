@@ -1,5 +1,6 @@
-//Author: Smaule Kundrat
+//Author: Samuel Kundrat
 // login xkundrs00
+
 import 'package:http/http.dart' as http;
 import 'package:sink_it/exceptions/api_exception.dart';
 import 'package:sink_it/models/player.dart';
@@ -100,11 +101,9 @@ class ApiService {
     try {
       final shipsJson = ships.map((ship) {
         final json = ship.toJson();
-        print('🔍 Ship JSON: $json'); // ← DEBUG
         return json;
       }).toList();
 
-      print('📦 All ships JSON: $shipsJson');
       final response = await _client.post(
         Uri.parse('$baseUrl/games/$gameID/players/$playerId/ships'),
         headers: _headers,

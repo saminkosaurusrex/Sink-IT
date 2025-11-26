@@ -8,7 +8,7 @@ import 'package:sink_it/providers/game_config_provider.dart';
 import 'package:sink_it/providers/game_state_provider.dart';
 import 'package:sink_it/providers/ship_placement_provider.dart';
 import 'package:sink_it/screens/game_screen.dart';
-import 'package:sink_it/screens/setup/ship_box.dart';
+import 'package:sink_it/shared/ship_box.dart';
 import 'package:sink_it/shared/game_board.dart';
 import 'package:sink_it/shared/styled_box.dart';
 import 'package:sink_it/shared/styled_button.dart';
@@ -174,6 +174,28 @@ class _PlayerSetupScreenState extends ConsumerState<PlayerSetupScreen> {
                   ),
 
                   const SizedBox(height: 16),
+                  // if (placementState.selectedShip != null)
+                  //   Padding(
+                  //     padding: const EdgeInsets.only(bottom: 16),
+                  //     child: ElevatedButton.icon(
+                  //       onPressed: () {
+                  //         placementController.rotateShip();
+                  //       },
+                  //       icon: Icon(Icons.rotate_right, size: 24),
+                  //       label: Text('Rotate Ship'),
+                  //       style: ElevatedButton.styleFrom(
+                  //         backgroundColor: AppTheme.primaryRed,
+                  //         foregroundColor: AppTheme.textPrimary,
+                  //         padding: EdgeInsets.symmetric(
+                  //           horizontal: 24,
+                  //           vertical: 12,
+                  //         ),
+                  //         shape: RoundedRectangleBorder(
+                  //           borderRadius: BorderRadius.circular(8),
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ),
 
                   // Submit Button
                   PrimaryButton(

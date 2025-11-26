@@ -179,6 +179,44 @@ class ShipPlacement extends _$ShipPlacement {
   void reset() {
     state = ShipPlacementState.initial(_fleet);
   }
+
+  void _removeShip(String shipId) {
+    final updated = List<Ship>.from(state.placedShips)
+      ..removeWhere((ship) => ship.id == shipId);
+
+    state = state.copyWith(placedShips: updated);
+  }
+
+  void rotateShip() {
+    final ship = state.selectedShip;
+    if (ship == null) return;
+
+    final isPlaced = state.placedShips.any((s) => s.id == ship.id);
+
+    // ❌ ODSTRÁŇ TOTO:
+    // Ship clean = _fleet.firstWhere((s) => s.id == ship.id);
+
+    // ✅ Rotuj AKTUÁLNU loď (ktorá už môže byť rotovaná)
+    if (isPlaced) {
+      _removeShip(ship.id);
+    }
+
+    // ✅ Rotuj shape aktuálnej vybranej lode
+    final rotatedShape = _rotateShape(ship.shape);
+    final rotatedShip = ship.copyWith(shape: rotatedShape);
+
+    // Zistí index vybranej lode
+    final idx = _fleet.indexWhere((s) => s.id == ship.id);
+
+    // Aktualizuj stav
+    state = state.copyWith(selectedShip: rotatedShip, selectedShipIndex: idx);
+  }
+
+  List<Position> _rotateShape(List<Position> shape) {
+    return shape
+        .map((cell) => Position(posX: -cell.posY, posY: cell.posX))
+        .toList();
+  }
 }
 
 @riverpod

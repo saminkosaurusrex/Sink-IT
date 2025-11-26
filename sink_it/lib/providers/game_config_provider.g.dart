@@ -42,7 +42,7 @@ final class GameConfigControllerProvider
 }
 
 String _$gameConfigControllerHash() =>
-    r'ed535dcea7da62bf0da8b0d7cdc8fee477e0f708';
+    r'a0892a62cb0b53ab7bbe698b22715dc76288d3b9';
 
 abstract class _$GameConfigController extends $Notifier<GameConfig> {
   GameConfig build();

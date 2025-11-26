@@ -64,6 +64,18 @@ class GamePlay extends _$GamePlay {
           SoundManager().miss();
         }
       }
+
+      final newPlayer1Stats = isPlayer1Attacking
+          ? (response.hit
+                ? state.player1Stats.incrementHits()
+                : state.player1Stats.incrementMIsses())
+          : state.player1Stats;
+
+      final newPlayer2Stats = !isPlayer1Attacking
+          ? (response.hit
+                ? state.player2Stats.incrementHits()
+                : state.player2Stats.incrementMIsses())
+          : state.player2Stats;
       // Update board based on who's attacking
       if (isPlayer1Attacking) {
         final updatedPlayerBoard = Map<Position, CellState>.from(
@@ -79,6 +91,9 @@ class GamePlay extends _$GamePlay {
               ? 'You sunk ${response.sunkShip}!'
               : (response.hit ? 'Hit!' : 'Miss!'),
           isAttacking: false,
+          player1Stats: newPlayer1Stats,
+          player2Stats: newPlayer2Stats,
+          total: state.total + 1,
         );
       } else {
         final updatedOpponentBoard = Map<Position, CellState>.from(
@@ -94,6 +109,9 @@ class GamePlay extends _$GamePlay {
               ? 'You sunk ${response.sunkShip}!'
               : (response.hit ? 'Hit!' : 'Miss!'),
           isAttacking: false,
+          player1Stats: newPlayer1Stats,
+          player2Stats: newPlayer2Stats,
+          total: state.total + 1,
         );
       }
 

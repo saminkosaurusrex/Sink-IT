@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sink_it/screens/setup/setup_screen.dart';
+import 'package:sink_it/screens/setup_screen.dart';
 import 'package:sink_it/shared/styled_button.dart';
 import 'package:sink_it/shared/styled_text.dart';
 

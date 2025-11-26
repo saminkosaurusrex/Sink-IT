@@ -7,8 +7,8 @@ import 'package:sink_it/providers/game_config_provider.dart';
 import 'package:sink_it/providers/game_state_provider.dart';
 import 'package:sink_it/providers/ship_editor_provider.dart';
 import 'package:sink_it/screens/player_setup_screen.dart';
-import 'package:sink_it/screens/setup/setting_row.dart';
-import 'package:sink_it/screens/setup/ship_box.dart';
+import 'package:sink_it/shared/setting_row.dart';
+import 'package:sink_it/shared/ship_box.dart';
 import 'package:sink_it/shared/board_size_button.dart';
 import 'package:sink_it/shared/ship_shape_editor.dart';
 import 'package:sink_it/shared/styled_box.dart';
@@ -16,21 +16,17 @@ import 'package:sink_it/shared/styled_button.dart';
 import 'package:sink_it/shared/styled_text.dart';
 import 'package:sink_it/theme.dart';
 
-/// FRONTEND - Setup obrazovka pre konfiguráciu hry
-/// Všetka logika je v provideroch, UI len zobrazuje a volá API
 class SetupScreen extends ConsumerWidget {
   const SetupScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Sledovanie stavu z providerov
     final currentBoardSize = ref.watch(boardSizeProvider);
     final currentSoundEnabled = ref.watch(soundEnabledProvider);
     final currentAnimationsEnabled = ref.watch(animationsEnabledProvider);
     final currentConfig = ref.watch(gameConfigControllerProvider);
     final currentEditingShip = ref.watch(shipEditorProvider);
 
-    // Controllery pre volanie BE API
     final configController = ref.read(gameConfigControllerProvider.notifier);
     final editorController = ref.read(shipEditorProvider.notifier);
 
@@ -41,7 +37,7 @@ class SetupScreen extends ConsumerWidget {
           padding: EdgeInsets.all(16),
           child: Column(
             children: [
-              // ===== BOARD SIZE =====
+              //Board size
               SectionBox(
                 title: StyledTitle('Board Size'),
                 child: Row(
@@ -64,39 +60,53 @@ class SetupScreen extends ConsumerWidget {
               ),
               SizedBox(height: 15),
 
-              // ===== FLEET COMPOSITION (Custom Lodě) =====
+              //Fleet composition
               SectionBox(
                 title: StyledTitle(
                   'Fleet Composition (${currentConfig.fleet.length})',
                 ),
                 child: Column(
                   children: [
-                    // Ak NIE je editovaná žiadna loď, zobraz zoznam
+                    // Warning
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.white10,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.white24),
+                        ),
+                        child: StyledText(
+                          'Choose your ship shapes wisely — ships cannot be rotated later.',
+                        ),
+                      ),
+                    ),
+
+                    //ships not beeing edited
+                    //collection encapsulation for widget to be placed in childre[]
                     if (currentEditingShip == null) ...[
-                      // Zoznam lodí
                       ...currentConfig.fleet.map((ship) {
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 8),
                           child: ShipBox(
                             ship: ship,
                             onTap: () {
-                              // Začni editáciu existujúcej lode
                               editorController.startEditShip(ship);
                             },
                             onDelete: () {
-                              // Vymaž loď z flotily
                               configController.removeShip(ship.id);
                             },
                           ),
                         );
                       }),
 
-                      // Tlačidlo Add Ship
+                      //Add ship btn
                       Padding(
                         padding: const EdgeInsets.only(top: 8),
                         child: PrimaryButton(
                           onPressed: () {
-                            // Začni editáciu novej lode
                             editorController.startNewShip();
                           },
                           child: StyledTitle('Add Ship'),
@@ -104,15 +114,15 @@ class SetupScreen extends ConsumerWidget {
                       ),
                     ],
 
-                    // Ak JE editovaná loď, zobraz editor
+                    //
                     if (currentEditingShip != null) ...[
                       ShipShapeEditor(maxTiles: 5),
                       SizedBox(height: 16),
 
-                      // Tlačidlá Save / Cancel
+                      // save, cancel btn
                       Row(
                         children: [
-                          // Cancel button
+                          // Cancel btn
                           Expanded(
                             child: SecondaryButton(
                               text: "Cancel",
@@ -123,13 +133,13 @@ class SetupScreen extends ConsumerWidget {
                           ),
                           SizedBox(width: 12),
 
-                          // Save button
+                          // Save btn
                           Expanded(
                             child: PrimaryButton(
                               onPressed: () {
                                 final ship = editorController.getCurrentShip();
 
-                                // Validácia
+                                // Validation
                                 if (ship == null || ship.shape.isEmpty) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
@@ -142,7 +152,7 @@ class SetupScreen extends ConsumerWidget {
                                 }
 
                                 try {
-                                  // Ak je loď už vo flotile, odstráň ju
+                                  //remove ship from config if it already exists
                                   final existsInFleet = currentConfig.fleet.any(
                                     (s) => s.id == ship.id,
                                   );
@@ -151,13 +161,13 @@ class SetupScreen extends ConsumerWidget {
                                     configController.removeShip(ship.id);
                                   }
 
-                                  // Pridaj/aktualizuj loď cez Controller API
+                                  //add ship to config
                                   configController.addShip(
                                     ship.shape,
                                     name: ship.name,
                                   );
 
-                                  // Ukonči editáciu
+                                  //cancel edit
                                   editorController.cancel();
                                 } catch (e) {
                                   ScaffoldMessenger.of(context).showSnackBar(
@@ -181,7 +191,7 @@ class SetupScreen extends ConsumerWidget {
 
               SizedBox(height: 15),
 
-              // ===== GAME OPTIONS =====
+              //game settings
               SectionBox(
                 title: StyledTitle('Game Options'),
                 child: Column(
@@ -217,12 +227,11 @@ class SetupScreen extends ConsumerWidget {
               ),
               SizedBox(height: 15),
 
-              // ===== NEXT BUTTON =====
-              // Zobraz len ak NIE je editácia
+              //next btn
               if (currentEditingShip == null)
                 PrimaryButton(
                   onPressed: () {
-                    // Validácia - musí byť aspoň jedna loď
+                    // checker for atleast 1 ship in config
                     if (currentConfig.fleet.isEmpty) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
@@ -234,12 +243,11 @@ class SetupScreen extends ConsumerWidget {
                       return;
                     }
 
-                    // Získaj game state controller
                     final gameStateController = ref.read(
                       gameStateProvider.notifier,
                     );
 
-                    // Zobraz loading dialog
+                    // loading
                     showDialog(
                       context: context,
                       barrierDismissible: false,
@@ -250,13 +258,14 @@ class SetupScreen extends ConsumerWidget {
                       ),
                     );
 
-                    // Vytvor hru na serveri (async)
+                    //create game on server
                     gameStateController
                         .createGame(currentConfig)
                         .then((_) {
-                          // Úspech - zavri loading a naviguj
+                          // success
                           if (context.mounted) {
-                            Navigator.pop(context); // Zavri loading
+                            //clsoe
+                            Navigator.pop(context);
 
                             Navigator.push(
                               context,
@@ -267,9 +276,9 @@ class SetupScreen extends ConsumerWidget {
                           }
                         })
                         .catchError((e) {
-                          // Chyba - zavri loading a zobraz error
+                          // error
                           if (context.mounted) {
-                            Navigator.pop(context); // Zavri loading
+                            Navigator.pop(context);
 
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(

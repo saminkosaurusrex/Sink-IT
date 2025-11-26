@@ -1,4 +1,4 @@
-//Author: Samuel Kudnrat
+//Author: Samuel Kundrat
 //Login: xkundrs00
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';

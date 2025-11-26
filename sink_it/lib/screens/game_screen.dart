@@ -12,7 +12,6 @@ import 'package:sink_it/shared/game_board.dart';
 import 'package:sink_it/shared/styled_text.dart';
 import 'package:sink_it/theme.dart';
 
-/// FRONTEND - Hot-seat režim: Obaja hráči vidia svoje útočné boardy
 class GameScreen extends ConsumerWidget {
   const GameScreen({super.key});
 
@@ -28,7 +27,6 @@ class GameScreen extends ConsumerWidget {
             ? next.player1!
             : next.player2!;
 
-        // Naviguj na winning screen
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (_) => WinScreen(name: winner.name)),
         );
@@ -59,37 +57,38 @@ class GameScreen extends ConsumerWidget {
       body: SafeArea(
         child: Column(
           children: [
+            //player2
             Expanded(
               child: _buildPlayerSection(
                 context: context,
                 ref: ref,
                 player: game.player2!,
-                cellStates: gamePlayState.opponentBoard, // ✅ P2 útočí na P1
+                cellStates: gamePlayState.opponentBoard,
                 isCurrentPlayer: game.currentPlayerIndex == 1,
                 isAttacking: isAttacking,
                 rotated: true,
-                showShips: false, // ✅ Neukáž lode protivníka
+                showShips: false,
               ),
             ),
 
-            // ===== DIVIDER =====
+            // divider
             Container(
               height: 4,
               color: AppTheme.missWhite,
               margin: EdgeInsets.symmetric(vertical: 8),
             ),
 
-            // ===== PLAYER 1 BOARD (hore) =====
+            //player1
             Expanded(
               child: _buildPlayerSection(
                 context: context,
                 ref: ref,
                 player: game.player1!,
-                cellStates: gamePlayState.playerBoard, // ✅ P1 útočí na P2
+                cellStates: gamePlayState.playerBoard,
                 isCurrentPlayer: game.currentPlayerIndex == 0,
                 isAttacking: isAttacking,
                 rotated: false,
-                showShips: false, // ✅ Neukáž lode protivníka
+                showShips: false,
               ),
             ),
           ],
@@ -111,9 +110,8 @@ class GameScreen extends ConsumerWidget {
   }) {
     final game = ref.read(gameStateProvider)!;
 
-    // Rotácia celej sekcie o 180° pre Player 2
     return Transform.rotate(
-      angle: rotated ? 3.14159 : 0, // π radiánov = 180°
+      angle: rotated ? 3.14159 : 0,
       child: Container(
         padding: EdgeInsets.all(16),
         decoration: BoxDecoration(
@@ -128,7 +126,7 @@ class GameScreen extends ConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Header
+            // Header player name
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
