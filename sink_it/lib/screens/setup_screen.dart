@@ -62,9 +62,7 @@ class SetupScreen extends ConsumerWidget {
 
               //Fleet composition
               SectionBox(
-                title: StyledTitle(
-                  'Fleet Composition (${currentConfig.fleet.length})',
-                ),
+                title: StyledTitle('Fleet Composition'),
                 child: Column(
                   children: [
                     // Warning
@@ -103,15 +101,17 @@ class SetupScreen extends ConsumerWidget {
                       }),
 
                       //Add ship btn
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8),
-                        child: PrimaryButton(
-                          onPressed: () {
-                            editorController.startNewShip();
-                          },
-                          child: StyledTitle('Add Ship'),
+                      if (currentConfig.fleet.length + 1 <=
+                          currentConfig.maxFleetSize)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8),
+                          child: PrimaryButton(
+                            onPressed: () {
+                              editorController.startNewShip();
+                            },
+                            child: StyledTitle('Add Ship'),
+                          ),
                         ),
-                      ),
                     ],
 
                     //

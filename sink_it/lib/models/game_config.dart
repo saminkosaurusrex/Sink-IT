@@ -10,7 +10,7 @@ class GameConfig {
   final List<Ship> fleet;
 
   int get maxFleetSize {
-    if (boardSize == 8) return 3;
+    if (boardSize == 8) return 4;
     if (boardSize == 10) return 5;
     return 5;
   }

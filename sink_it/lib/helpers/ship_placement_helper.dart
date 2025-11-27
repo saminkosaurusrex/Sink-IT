@@ -15,7 +15,7 @@ class ShipPlacementHelper {
     //check if ship is inside the board
     for (var cell in ship.shape) {
       final x = startPosition.posX + cell.posX;
-      final y = startPosition.posY + cell.posX;
+      final y = startPosition.posY + cell.posY;
 
       if (x < 0 || x >= borderSize || y < 0 || y >= borderSize) {
         return false;
