@@ -7,8 +7,7 @@ import 'package:sink_it/providers/ship_editor_provider.dart';
 import 'package:sink_it/shared/styled_text.dart';
 import 'package:sink_it/theme.dart';
 
-/// Čistý widget pre editáciu tvaru lode
-/// Žiadna logika - iba zobrazenie a volanie Controller metód
+//widget for ship shape editation in setup_screen
 class ShipShapeEditor extends ConsumerWidget {
   final int gridSize;
   final int maxTiles;
@@ -29,7 +28,7 @@ class ShipShapeEditor extends ConsumerWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // Názov lode
+        // Ship name
         TextField(
           controller: TextEditingController(text: editor.name)
             ..selection = TextSelection.fromPosition(
@@ -59,11 +58,12 @@ class ShipShapeEditor extends ConsumerWidget {
         ),
         SizedBox(height: 16),
 
-        // Info riadok
+        // Info about tiles used
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             StyledText('$currentTiles/$maxTiles tiles'),
+            //clear shape
             TextButton(
               onPressed: currentTiles > 0 ? controller.clearShape : null,
               style: TextButton.styleFrom(

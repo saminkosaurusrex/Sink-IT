@@ -36,10 +36,6 @@ class Game {
     throw StateError('Opponent not available');
   }
 
-  bool get hasPlayer1 => player1 != null;
-  bool get hasPlayer2 => player2 != null;
-  bool get hasBothPlayers => player1 != null && player2 != null;
-
   factory Game.fromJson(Map<String, dynamic> json) {
     final playersList = json['players'] as List<dynamic>;
 

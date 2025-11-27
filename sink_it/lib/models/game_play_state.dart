@@ -5,6 +5,7 @@ import 'package:sink_it/enums/cell_state.dart';
 import 'package:sink_it/models/player_stats.dart';
 import 'package:sink_it/models/position.dart';
 
+//represents current game state
 class GamePlayState {
   final Map<Position, CellState> playerBoard;
   final Map<Position, CellState> opponentBoard;
@@ -25,6 +26,7 @@ class GamePlayState {
     this.total = 0,
   });
 
+  //helper for state change
   GamePlayState copyWith({
     Map<Position, CellState>? playerBoard,
     Map<Position, CellState>? opponentBoard,

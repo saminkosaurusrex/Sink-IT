@@ -22,6 +22,7 @@ class GameConfig {
     List<Ship>? fleet,
   }) : fleet = fleet ?? [];
 
+  //factory constructor
   factory GameConfig.fromJson(Map<String, dynamic> json) {
     return GameConfig(
       boardSize: json['board_size'] ?? 10,
@@ -31,6 +32,7 @@ class GameConfig {
     );
   }
 
+  //model -> json
   Map<String, dynamic> toJson() {
     return {
       'board_size': boardSize,
@@ -40,6 +42,7 @@ class GameConfig {
     };
   }
 
+  //helper method for state change
   GameConfig copyWith({
     int? boardSize,
     bool? soundEnabled,

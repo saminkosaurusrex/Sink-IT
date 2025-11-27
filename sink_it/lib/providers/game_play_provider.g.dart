@@ -41,7 +41,7 @@ final class GamePlayProvider
   }
 }
 
-String _$gamePlayHash() => r'8abfc2b4c96103d7f0306cd2f55c51a4c0d145f3';
+String _$gamePlayHash() => r'fee4444797a682a8c1671ad10f9cff2353d53812';
 
 abstract class _$GamePlay extends $Notifier<GamePlayState> {
   GamePlayState build();
@@ -184,43 +184,3 @@ final class RemainingEnemyShipsProvider
 
 String _$remainingEnemyShipsHash() =>
     r'91ec7cd03093cb3693da7c4e35d69049e7dbda40';
-
-@ProviderFor(totalEnemyShips)
-const totalEnemyShipsProvider = TotalEnemyShipsProvider._();
-
-final class TotalEnemyShipsProvider extends $FunctionalProvider<int, int, int>
-    with $Provider<int> {
-  const TotalEnemyShipsProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'totalEnemyShipsProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$totalEnemyShipsHash();
-
-  @$internal
-  @override
-  $ProviderElement<int> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
-
-  @override
-  int create(Ref ref) {
-    return totalEnemyShips(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(int value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<int>(value),
-    );
-  }
-}
-
-String _$totalEnemyShipsHash() => r'd65c28df42fb394c8f84ab60809c7797c070c99f';

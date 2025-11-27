@@ -48,4 +48,4 @@ final class ApiServiceProvider
   }
 }
 
-String _$apiServiceHash() => r'58b9f94de30d020620cca1e191818fc8867c17fa';
+String _$apiServiceHash() => r'845b66891f86cfc4de5a5fc5db87ebca6c593fa6';

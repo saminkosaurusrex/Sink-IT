@@ -1,3 +1,6 @@
+//Author: Samuel Kundrat
+//Login: xkundrs00
+
 import 'package:flutter/material.dart';
 import 'package:sink_it/screens/main_screen.dart';
 import 'package:sink_it/theme.dart';
@@ -9,13 +12,4 @@ void main() {
       child: MaterialApp(home: const MainScreen(), theme: AppTheme.darkTheme),
     ),
   );
-}
-
-class SinkItApp extends StatelessWidget {
-  const SinkItApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold();
-  }
 }

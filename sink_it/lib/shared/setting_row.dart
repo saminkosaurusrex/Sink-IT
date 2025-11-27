@@ -1,3 +1,6 @@
+//Author: Samuel Kundrat
+//Login: xkundrs00
+
 import 'package:flutter/material.dart';
 
 class SettingRow extends StatefulWidget {

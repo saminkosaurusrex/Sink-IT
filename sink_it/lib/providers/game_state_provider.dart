@@ -18,25 +18,25 @@ class GameState extends _$GameState {
     return null;
   }
 
-  /// API: Vytvorenie novej hry (volá server)
+  //game creation
   Future<void> createGame(GameConfig config) async {
     try {
-      // 1. Volaj server API pre vytvorenie hry
+      //server creation
       final api = ref.read(apiServiceProvider);
       final serverGame = await api.createGame(config);
 
-      // 2. Player 1 sa pripojí
+      //connect player1
       final player1 = await api.joinGame(serverGame.id, 'Player 1');
 
-      // 3. Player 2 sa pripojí
+      //connect player2
       final player2 = await api.joinGame(serverGame.id, 'Player 2');
 
-      // 4. Ulož hru do lokálneho stavu s reálnymi server IDs
+      //save game to local state
       state = Game(
-        id: serverGame.id, // ← Server ID!
+        id: serverGame.id,
         config: config,
-        player1: player1, // ← Server player s ID!
-        player2: player2, // ← Server player s ID!
+        player1: player1,
+        player2: player2,
         status: GameStatus.setup,
         currentPlayerIndex: 0,
       );
@@ -45,6 +45,7 @@ class GameState extends _$GameState {
     }
   }
 
+  //submit player ships
   void sumbitPlayerShips(List<Ship> ships) {
     if (state == null) return;
 
@@ -57,6 +58,7 @@ class GameState extends _$GameState {
       isReady: true,
     );
 
+    //update state
     if (state!.currentPlayerIndex == 0) {
       state = Game(
         id: state!.id,
@@ -80,24 +82,11 @@ class GameState extends _$GameState {
     }
   }
 
-  void goToPreviousPlayer() {
-    if (state == null || state!.currentPlayerIndex == 0) return;
-
-    state = Game(
-      id: state!.id,
-      config: state!.config,
-      player1: state!.player1,
-      player2: state!.player2,
-      status: state!.status,
-      winnerId: state!.winnerId,
-      currentPlayerIndex: state!.currentPlayerIndex - 1,
-    );
-  }
-
   void resetGame() {
     state = null;
   }
 
+  //set winner
   void setWinner(String winnerId) {
     if (state == null) return;
     state = Game(
@@ -111,6 +100,7 @@ class GameState extends _$GameState {
     );
   }
 
+  //staert game
   void startGame() {
     if (state == null) return;
     if (!state!.player1!.isReady || !state!.player2!.isReady) return;
@@ -126,6 +116,7 @@ class GameState extends _$GameState {
     );
   }
 
+  //switch turn to another player
   void switchTurn() {
     if (state == null) return;
 
@@ -142,6 +133,7 @@ class GameState extends _$GameState {
     );
   }
 
+  //end game
   void endGame(String winnerId) {
     if (state == null) return;
 
@@ -156,6 +148,7 @@ class GameState extends _$GameState {
     );
   }
 
+  //update pleyer name
   void updatePlayerName(String newName) {
     if (state == null) return;
 
@@ -197,25 +190,27 @@ class GameState extends _$GameState {
   }
 }
 
-// ========== COMPUTED PROVIDERS ==========
-
+//state of current game
 @riverpod
 Game? currentGame(Ref ref) {
   return ref.watch(gameStateProvider);
 }
 
+//state of current player
 @riverpod
 Player? currentPLayer(Ref ref) {
   final game = ref.watch(gameStateProvider);
   return game?.getCurrentPlayer;
 }
 
+//state of opponent
 @riverpod
 Player? currentOpponent(Ref ref) {
   final game = ref.watch(gameStateProvider);
   return game?.getCurrentOpponent;
 }
 
+//state of current player name
 @riverpod
 String currentPlayerName(Ref ref) {
   final game = ref.watch(gameStateProvider);
@@ -223,12 +218,14 @@ String currentPlayerName(Ref ref) {
   return game.getCurrentPlayer.name;
 }
 
+//state of current player index
 @riverpod
 int currentPlayerIndex(Ref ref) {
   final game = ref.watch(gameStateProvider);
   return game?.currentPlayerIndex ?? 0;
 }
 
+//state if all players are ready
 @riverpod
 bool allPLayersReady(Ref ref) {
   final game = ref.watch(gameStateProvider);
@@ -236,48 +233,56 @@ bool allPLayersReady(Ref ref) {
   return game.player1!.isReady && game.player2!.isReady;
 }
 
+//state if game is in setup state
 @riverpod
 bool isSetupState(Ref ref) {
   final game = ref.watch(gameStateProvider);
   return game?.status == GameStatus.setup;
 }
 
+//state if game is in progress state
 @riverpod
 bool isProgressState(Ref ref) {
   final game = ref.watch(gameStateProvider);
   return game?.status == GameStatus.inProgrress;
 }
 
+//state if game is in end state
 @riverpod
 bool isEndState(Ref ref) {
   final game = ref.watch(gameStateProvider);
   return game?.status == GameStatus.end;
 }
 
+//state of winner id
 @riverpod
 String? winnerID(Ref ref) {
   final game = ref.watch(gameStateProvider);
   return game?.winnerId;
 }
 
+//state of player1
 @riverpod
 Player? player1(Ref ref) {
   final game = ref.watch(gameStateProvider);
   return game?.player1;
 }
 
+//state of player2
 @riverpod
 Player? player2(Ref ref) {
   final game = ref.watch(gameStateProvider);
   return game?.player2;
 }
 
+//stateof game config
 @riverpod
 GameConfig? gameConfigFromGame(Ref ref) {
   final game = ref.watch(gameStateProvider);
   return game?.config;
 }
 
+//state of game status
 @riverpod
 GameStatus? gameStatus(Ref ref) {
   final game = ref.watch(gameStateProvider);

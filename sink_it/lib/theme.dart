@@ -1,7 +1,13 @@
+//Author: Samuel Kundrat
+//Login: xkundrs0)
+
+//AI generated mostly
+//theme for whole app
+
 import 'package:flutter/material.dart';
 
 class AppTheme {
-  // Farby
+  // colors
   static const Color primaryRed = Color(0xFFD84315);
   static const Color darkBackground = Color(0xFF1A1A1A);
   static const Color cardBackground = Color(0xFF2A2A2A);
@@ -11,14 +17,14 @@ class AppTheme {
   static const Color textSecondary = Color(0xFFB0B0B0);
   static const Color gridLineColor = Color(0xFF404040);
 
-  // Herné farby
+  // colors game
   static const Color waterBlue = Color.fromARGB(255, 19, 141, 157);
   static const Color shipGray = Color(0xFF757575);
   static const Color hitRed = Color(0xFFE53935);
   static const Color missWhite = Color(0xFFEEEEEE);
   static const Color yellowGold = Color(0xFFFFD700);
 
-  // Základná téma
+  // Base theme
   static ThemeData get darkTheme {
     return ThemeData(
       brightness: Brightness.dark,
@@ -31,7 +37,7 @@ class AppTheme {
         background: darkBackground,
       ),
 
-      // AppBar téma
+      // AppBar
       appBarTheme: const AppBarTheme(
         backgroundColor: darkBackground,
         elevation: 0,
@@ -43,14 +49,14 @@ class AppTheme {
         ),
       ),
 
-      // Karty
+      // Cards
       cardTheme: CardThemeData(
         color: cardBackground,
         elevation: 2,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
 
-      // Tlačidlá
+      // Btns
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: primaryRed,
@@ -72,7 +78,7 @@ class AppTheme {
         ),
       ),
 
-      // Textové polia
+      // Text fields
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: lightGray,
@@ -123,7 +129,7 @@ class AppTheme {
         contentTextStyle: const TextStyle(color: textSecondary, fontSize: 16),
       ),
 
-      // Text téma
+      // Text
       textTheme: const TextTheme(
         displayLarge: TextStyle(
           color: textPrimary,
@@ -157,7 +163,7 @@ class AppTheme {
     );
   }
 
-  // Pomocné štýly pre hru
+  //game styles
   static BoxDecoration get gameCardDecoration => BoxDecoration(
     color: cardBackground,
     borderRadius: BorderRadius.circular(12),
@@ -182,7 +188,7 @@ class AppTheme {
     border: Border.all(color: gridLineColor, width: 0.5),
   );
 
-  // Tieň pre karty
+  // shedow
   static List<BoxShadow> get cardShadow => [
     BoxShadow(
       color: Colors.black.withAlpha(100),
@@ -191,7 +197,6 @@ class AppTheme {
     ),
   ];
 
-  // Animácie
   static const Duration shortAnimation = Duration(milliseconds: 200);
   static const Duration mediumAnimation = Duration(milliseconds: 300);
   static const Duration longAnimation = Duration(milliseconds: 500);

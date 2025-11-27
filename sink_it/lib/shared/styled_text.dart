@@ -1,6 +1,10 @@
+//Author: Samuel Kundrat
+//Login: xkundrs00
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+//styled text, custom text widgets
 class StyledText extends StatelessWidget {
   final String text;
   const StyledText(this.text, {super.key});

@@ -41,7 +41,7 @@ final class ShipPlacementProvider
   }
 }
 
-String _$shipPlacementHash() => r'7519f84d63e3da073ada8e31fa5dc4d00682237c';
+String _$shipPlacementHash() => r'e22eba0c74d3af075aa8988d4fd40c847f9336ba';
 
 abstract class _$ShipPlacement extends $Notifier<ShipPlacementState> {
   ShipPlacementState build();

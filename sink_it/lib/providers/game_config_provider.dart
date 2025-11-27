@@ -8,6 +8,7 @@ import 'package:sink_it/models/position.dart';
 import 'package:sink_it/models/ship/ship.dart';
 part 'game_config_provider.g.dart';
 
+//config controller
 @riverpod
 class GameConfigController extends _$GameConfigController {
   @override
@@ -19,6 +20,7 @@ class GameConfigController extends _$GameConfigController {
     );
   }
 
+  //setter for boardsize
   void setBoardSize(int size) {
     if (size != 10 && size != 8) {
       throw ArgumentError('Board size must be 8 or 10');
@@ -31,14 +33,17 @@ class GameConfigController extends _$GameConfigController {
     );
   }
 
+  //setter to enable sound
   void setSoundEnabled(bool soundEnabled) {
     state = state.copyWith(soundEnabled: soundEnabled);
   }
 
+  //setter to enable animations
   void setAnimationsEnabled(bool animationsEnabled) {
     state = state.copyWith(animationsEnabled: animationsEnabled);
   }
 
+  //reset to default settings
   void resetToDefaults() {
     state = GameConfig(
       boardSize: 8,
@@ -47,6 +52,7 @@ class GameConfigController extends _$GameConfigController {
     );
   }
 
+  //add ship to game config
   void addShip(List<Position> cells, {String? name}) {
     try {
       final newShip = ShipShapeHelper.normalizeAndValidate(cells);
@@ -61,12 +67,14 @@ class GameConfigController extends _$GameConfigController {
     }
   }
 
+  //remove ship from config
   void removeShip(String shipId) {
     state = state.copyWith(
       fleet: state.fleet.where((ship) => ship.id != shipId).toList(),
     );
   }
 
+  //getter for config
   GameConfig getConfig() => state;
 }
 
@@ -88,6 +96,7 @@ bool animationsEnabled(Ref ref) {
   return ref.watch(gameConfigControllerProvider).animationsEnabled;
 }
 
+//state of fleet
 @riverpod
 List<Map<String, dynamic>> fleetInfo(Ref ref) {
   final config = ref.watch(gameConfigControllerProvider);

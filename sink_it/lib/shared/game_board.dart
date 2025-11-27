@@ -1,3 +1,6 @@
+//Author: Samuel Kundrat
+//Login: xkundrs00
+
 import 'package:flutter/material.dart';
 import 'package:sink_it/enums/cell_state.dart';
 import 'package:sink_it/models/position.dart';
@@ -87,7 +90,7 @@ class GameBoard extends StatelessWidget {
           width: 8,
           height: 8,
           decoration: BoxDecoration(
-            color: AppTheme.missWhite,
+            color: AppTheme.darkBackground,
             shape: BoxShape.circle,
           ),
         ),

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:sink_it/providers/game_config_provider.dart';
+import 'package:sink_it/providers/game_play_provider.dart';
 import 'package:sink_it/providers/game_state_provider.dart';
 import 'package:sink_it/providers/ship_placement_provider.dart';
 import 'package:sink_it/screens/game_screen.dart';
@@ -15,10 +16,9 @@ import 'package:sink_it/shared/styled_button.dart';
 import 'package:sink_it/shared/styled_text.dart';
 import 'package:sink_it/theme.dart';
 
-// ✅ Provider pre edit mode
+// provider for edditing mode
 final isEditingNameProvider = StateProvider<bool>((ref) => false);
 
-// ✅ ZMEŇ NA ConsumerStatefulWidget
 class PlayerSetupScreen extends ConsumerStatefulWidget {
   const PlayerSetupScreen({super.key});
 
@@ -60,6 +60,7 @@ class _PlayerSetupScreenState extends ConsumerState<PlayerSetupScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        // player name editing
         title: isEditingName
             ? TextField(
                 controller: _nameController,
@@ -174,29 +175,6 @@ class _PlayerSetupScreenState extends ConsumerState<PlayerSetupScreen> {
                   ),
 
                   const SizedBox(height: 16),
-                  // if (placementState.selectedShip != null)
-                  //   Padding(
-                  //     padding: const EdgeInsets.only(bottom: 16),
-                  //     child: ElevatedButton.icon(
-                  //       onPressed: () {
-                  //         placementController.rotateShip();
-                  //       },
-                  //       icon: Icon(Icons.rotate_right, size: 24),
-                  //       label: Text('Rotate Ship'),
-                  //       style: ElevatedButton.styleFrom(
-                  //         backgroundColor: AppTheme.primaryRed,
-                  //         foregroundColor: AppTheme.textPrimary,
-                  //         padding: EdgeInsets.symmetric(
-                  //           horizontal: 24,
-                  //           vertical: 12,
-                  //         ),
-                  //         shape: RoundedRectangleBorder(
-                  //           borderRadius: BorderRadius.circular(8),
-                  //         ),
-                  //       ),
-                  //     ),
-                  //   ),
-
                   // Submit Button
                   PrimaryButton(
                     onPressed: !isSubmitting && placementController.canSubmit()
@@ -206,18 +184,13 @@ class _PlayerSetupScreenState extends ConsumerState<PlayerSetupScreen> {
                               allPLayersReadyProvider,
                             );
                             if (gameReady) {
+                              ref.read(gamePlayProvider.notifier).reset();
                               final gameStateController = ref.read(
                                 gameStateProvider.notifier,
                               );
                               gameStateController.startGame();
 
                               if (context.mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('Both players are ready!'),
-                                    backgroundColor: Colors.green,
-                                  ),
-                                );
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -228,6 +201,7 @@ class _PlayerSetupScreenState extends ConsumerState<PlayerSetupScreen> {
                             }
                           }
                         : null,
+                    // progress of submit
                     child: isSubmitting
                         ? SizedBox(
                             width: 20,

@@ -3,6 +3,7 @@
 
 import 'package:sink_it/models/position.dart';
 
+// attack response model for api response fro attack
 class AttackResponse {
   final bool hit;
   final String? sunkShip;

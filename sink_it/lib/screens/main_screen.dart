@@ -1,3 +1,6 @@
+//Author: Samuel Kundrat
+//Login: xkundrs00
+
 import 'package:flutter/material.dart';
 import 'package:sink_it/screens/setup_screen.dart';
 import 'package:sink_it/shared/styled_button.dart';
@@ -28,6 +31,7 @@ class MainScreen extends StatelessWidget {
 
               const Spacer(flex: 3),
 
+              //start game btn
               PrimaryButton(
                 onPressed: () {
                   Navigator.push(

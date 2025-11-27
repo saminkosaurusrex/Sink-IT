@@ -1,6 +1,10 @@
+//Author: Samuel Kundrat
+//Login: xkundrs00
+
 import 'package:flutter/material.dart';
 import 'package:sink_it/theme.dart';
 
+// default box for all items
 class SectionBox extends StatelessWidget {
   const SectionBox({super.key, required this.title, required this.child});
 

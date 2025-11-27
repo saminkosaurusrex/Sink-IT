@@ -10,6 +10,7 @@ import 'package:sink_it/providers/game_state_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'game_play_provider.g.dart';
 
+//game play provider, provides current state of game
 @Riverpod(keepAlive: true)
 class GamePlay extends _$GamePlay {
   @override
@@ -17,18 +18,22 @@ class GamePlay extends _$GamePlay {
     return const GamePlayState();
   }
 
+  //boards initilaizator
   void initializeBoards() {
     final game = ref.read(gameStateProvider);
     if (game == null) return;
 
-    state = GamePlayState(playerBoard: {}, opponentBoard: {});
+    state = GamePlayState();
   }
 
+  //reset to default
   void reset() {
     state = const GamePlayState();
   }
 
+  //atttack enemy methodes
   Future<void> attack(Position position) async {
+    //get current state of game
     final game = ref.read(gameStateProvider);
     if (game == null) return;
 
@@ -42,7 +47,7 @@ class GamePlay extends _$GamePlay {
       return;
       //throw Exception("Already attacked this position!");
     }
-
+    //set game to attacking state
     state = state.copyWith(isAttacking: true);
 
     try {
@@ -50,6 +55,7 @@ class GamePlay extends _$GamePlay {
       final currentPlayer = game.getCurrentPlayer;
       final opponent = game.getCurrentOpponent;
 
+      //send request to server
       final response = await api.attack(
         gameId: game.id,
         attackerId: currentPlayer.id,
@@ -57,6 +63,7 @@ class GamePlay extends _$GamePlay {
         pos: position,
       );
 
+      //sound effects
       if (game.config.soundEnabled) {
         if (response.hit) {
           SoundManager().hit();
@@ -64,19 +71,21 @@ class GamePlay extends _$GamePlay {
           SoundManager().miss();
         }
       }
-
+      //updated stats player1
       final newPlayer1Stats = isPlayer1Attacking
           ? (response.hit
                 ? state.player1Stats.incrementHits()
                 : state.player1Stats.incrementMIsses())
           : state.player1Stats;
 
+      //updated stats player2
       final newPlayer2Stats = !isPlayer1Attacking
           ? (response.hit
                 ? state.player2Stats.incrementHits()
                 : state.player2Stats.incrementMIsses())
           : state.player2Stats;
       // Update board based on who's attacking
+      //player1
       if (isPlayer1Attacking) {
         final updatedPlayerBoard = Map<Position, CellState>.from(
           state.playerBoard,
@@ -95,7 +104,9 @@ class GamePlay extends _$GamePlay {
           player2Stats: newPlayer2Stats,
           total: state.total + 1,
         );
-      } else {
+      }
+      //player2
+      else {
         final updatedOpponentBoard = Map<Position, CellState>.from(
           state.opponentBoard,
         );
@@ -114,10 +125,11 @@ class GamePlay extends _$GamePlay {
           total: state.total + 1,
         );
       }
-
+      //win
       if (response.shipsRemaining == 0) {
         final gameController = ref.read(gameStateProvider.notifier);
         gameController.setWinner(currentPlayer.id);
+        SoundManager().win();
         return;
       }
       //hotSeat
@@ -132,27 +144,23 @@ class GamePlay extends _$GamePlay {
   }
 }
 
+//state of last result
 @riverpod
 String? lastAttackResult(Ref ref) {
   return ref.watch(gamePlayProvider).lastAttackResult;
 }
 
+//state of isattacking
 @riverpod
 bool isAttacking(Ref ref) {
   return ref.watch(gamePlayProvider).isAttacking;
 }
 
+//state of remaining enemy ships
 @riverpod
 int remainingEnemyShips(Ref ref) {
   final game = ref.watch(gameStateProvider);
   if (game == null) return 0;
   final opponent = game.getCurrentOpponent;
   return opponent.ships.where((s) => !s.isSunk).length;
-}
-
-@riverpod
-int totalEnemyShips(Ref ref) {
-  final game = ref.watch(gameStateProvider);
-  if (game == null) return 0;
-  return game.getCurrentOpponent.ships.length;
 }

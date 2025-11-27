@@ -8,5 +8,6 @@ part 'api_service_provider.g.dart';
 
 @Riverpod(keepAlive: true)
 ApiService apiService(Ref ref) {
+  //server ip
   return ApiService(baseUrl: 'http://10.193.174.149:8000');
 }

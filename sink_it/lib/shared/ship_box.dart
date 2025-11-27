@@ -1,8 +1,12 @@
+//Author: Samuel Kundrat
+//Login: xkundrs00
+
 import 'package:flutter/material.dart';
 import 'package:sink_it/models/ship/ship.dart';
 import 'package:sink_it/shared/styled_text.dart';
 import 'package:sink_it/theme.dart';
 
+// box that shows boats available
 class ShipBox extends StatelessWidget {
   const ShipBox({super.key, required this.ship, this.onTap, this.onDelete});
 

@@ -24,6 +24,7 @@ class Ship {
 
   bool get isSunk => hits.length == placedPositions.length;
 
+  //helper methode for state change
   Ship copyWith({
     List<Position>? shape,
     List<Position>? placedPositions,
@@ -39,6 +40,7 @@ class Ship {
     );
   }
 
+  //Ship -> json
   Map<String, dynamic> toJson() => {
     'ship_name': name,
     'positions': placedPositions.map((p) => p.toJson()).toList(),

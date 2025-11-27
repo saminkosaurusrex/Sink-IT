@@ -15,6 +15,7 @@ class ShipEditor extends _$ShipEditor {
     return null;
   }
 
+  //create new boat
   void startNewShip() {
     state = Ship(
       id: DateTime.now().microsecondsSinceEpoch.toString(),

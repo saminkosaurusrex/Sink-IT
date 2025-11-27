@@ -34,6 +34,7 @@ class ShipShapeHelper {
     );
   }
 
+  //check if all cells are connected
   static bool areAllCellsConnected(List<Position> cells) {
     if (cells.isEmpty) return true;
     if (cells.length == 1) return true;

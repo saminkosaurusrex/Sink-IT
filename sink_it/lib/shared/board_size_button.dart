@@ -1,7 +1,11 @@
+//Author: Samuel Kundrat
+//Login: xkundrs00
+
 import 'package:flutter/material.dart';
 import 'package:sink_it/shared/styled_text.dart';
 import 'package:sink_it/theme.dart';
 
+// button for board zise
 class BoardSizeButton extends StatelessWidget {
   const BoardSizeButton({
     super.key,

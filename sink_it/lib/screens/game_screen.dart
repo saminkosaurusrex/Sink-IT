@@ -21,6 +21,7 @@ class GameScreen extends ConsumerWidget {
     final gamePlayState = ref.watch(gamePlayProvider);
     final isAttacking = ref.watch(isAttackingProvider);
 
+    //listener for game win
     ref.listen(gameStateProvider, (previous, next) {
       if (next != null && next.winnerId != null && context.mounted) {
         final winner = next.winnerId == next.player1?.id
@@ -33,6 +34,7 @@ class GameScreen extends ConsumerWidget {
       }
     });
 
+    //error state
     if (game == null || game.player1 == null || game.player2 == null) {
       return Scaffold(
         appBar: AppBar(title: Text('Game Error')),
@@ -97,7 +99,7 @@ class GameScreen extends ConsumerWidget {
     );
   }
 
-  /// Helper: Sekcia pre jedného hráča
+  /// Helper one player section
   Widget _buildPlayerSection({
     required BuildContext context,
     required WidgetRef ref,
@@ -174,7 +176,7 @@ class GameScreen extends ConsumerWidget {
     );
   }
 
-  /// Helper: Spracuj útok
+  /// Helper to parse attack
   void _handleAttack(BuildContext context, WidgetRef ref, Position position) {
     final gamePlayController = ref.read(gamePlayProvider.notifier);
 

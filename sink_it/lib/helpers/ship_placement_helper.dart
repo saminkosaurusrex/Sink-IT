@@ -5,6 +5,7 @@ import 'package:sink_it/models/position.dart';
 import 'package:sink_it/models/ship/ship.dart';
 
 class ShipPlacementHelper {
+  //checks if boat can be placed in specific position
   static bool canPlaceShip(
     Ship ship,
     Position startPosition,
@@ -28,7 +29,7 @@ class ShipPlacementHelper {
       );
     }).toSet();
 
-    //check if ship isnt over any other ship (ale ignoruj samotnú loď)
+    //check if ship isnt over any other ship, ignors self
     for (var placedShip in placedShips) {
       if (placedShip.id == ship.id) {
         continue;
@@ -53,6 +54,7 @@ class ShipPlacementHelper {
     return true;
   }
 
+  //place ship, takes relative position and adds it to absolute position in grid
   static Ship placeShip(Ship ship, Position startPosition) {
     final positions = ship.shape.map((cell) {
       return Position(
@@ -63,6 +65,7 @@ class ShipPlacementHelper {
     return ship.copyWith(placedPositions: positions);
   }
 
+  //getter for positions of the ships,
   static Map<Position, dynamic> getShipPositions(List<Ship> ships) {
     final Map<Position, dynamic> positions = {};
     for (var ship in ships) {
